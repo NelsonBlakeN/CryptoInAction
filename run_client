@@ -8,8 +8,9 @@ BUFFSIZE=100
 CHANNELS=20
 
 # Build and compile all files
-make all
+make client
 
+# If compilation is successful, run client
 if [[ $? -eq 0 ]]; then
-    client -n $HOST -b $BUFFSIZE -w $REQUESTS -h $HOST -p $PORT
+    ./client -n $HOST -b $BUFFSIZE -w $REQUESTS -h $HOST -p $PORT
 fi
