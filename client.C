@@ -39,8 +39,11 @@
 
 using namespace std;
 
-int rtc = 0;
-int wtc = 0;
+// Total number of request and worker threads
+int reqThreadCount = 0;
+int workThreadCount = 0;
+
+// Mutex for atomic printing
 pthread_mutex_t mprint;
 
 /*--------------------------------------------------------------------------*/
@@ -86,6 +89,7 @@ typedef struct req_thread {
     }
 } rts;
 
+// Puts a request (string) on the bounded buffer
 void* request_thread_func(void* args) {
     rts* r = (rts*)args;
     for(int i = 0; i < r->num; ++i) {
@@ -98,12 +102,12 @@ void* request_thread_func(void* args) {
 typedef struct event_thread {
     BoundedBuffer* bb;
     map<string, BoundedBuffer*> stat_map;
-    NetworkRequestChannel** RCA;
+    NetworkRequestChannel** reqChannelArray;
 
     event_thread(BoundedBuffer* b, map<string, BoundedBuffer*> m, NetworkRequestChannel** r) {
         bb = b;
         stat_map = m;
-        RCA = r;
+        reqChannelArray = r;
     }
 } ets;
 
@@ -117,53 +121,53 @@ void* event_handler_func(void* args) {
 
     // Initialize all file descriptors to the fd of the channel
     int max_fd = 0;
-    for(int i = 0; i < wtc; ++i) {
-        FD_SET(event_thread->RCA[i]->get_sock(), &readset);
-        if(event_thread->RCA[i]->get_sock() > max_fd)
-            max_fd = event_thread->RCA[i]->get_sock();
+    for(int i = 0; i < workThreadCount; ++i) {
+        FD_SET(event_thread->reqChannelArray[i]->get_sock(), &readset);
+        if(event_thread->reqChannelArray[i]->get_sock() > max_fd)
+            max_fd = event_thread->reqChannelArray[i]->get_sock();
     }
     max_fd = max_fd + 1;
 
     // Initialize notebook (fd_to_name), channels
     // Check if the request from bb is DONE, quit
     // If DONE: (in while loop) decrement request thread counter, don't place in book
-    for(int i = 0; i < wtc; ++i) {
-        int x = event_thread->RCA[i]->get_sock();
+    for(int i = 0; i < workThreadCount; ++i) {
+        int x = event_thread->reqChannelArray[i]->get_sock();
         string request = event_thread->bb->consume();
         while(request == "DONE") {
-            rtc--;
-            if(rtc == 0) {
+            reqThreadCount--;
+            if(reqThreadCount == 0) {
                 // If req thread counter == 0, send QUITs equal to num channels to bb
-                for(int j = 0; j < wtc; ++j) {
+                for(int j = 0; j < workThreadCount; ++j) {
                     event_thread->bb->produce("quit");
                 }
             }
             request = event_thread->bb->consume();
         }
         if(request == "quit") {
-            wtc--;
+            workThreadCount--;
             // If worker counter is 0, send quit requests to stats threads and break
-            if(wtc==0) {
+            if(workThreadCount==0) {
                 for(auto x : event_thread->stat_map) {
                     x.second->produce("quit");
                 }
-                for(int j = 0; j < wtc; ++j) {
-                    event_thread->RCA[j]->send_request("quit");
+                for(int j = 0; j < workThreadCount; ++j) {
+                    event_thread->reqChannelArray[j]->send_request("quit");
                 }
                 break;
             }
         }
-        event_thread->RCA[i]->cwrite(request);
+        event_thread->reqChannelArray[i]->cwrite(request);
         string name = request.substr(5);
         fd_to_name[x] = name;
     }
-    int orig_wtc = wtc;
+    int orig_wtc = workThreadCount;
     // Continuously read from channels, process reply
     while(true) {
         // Reset state
         FD_ZERO(&readset);
         for(int j = 0; j < orig_wtc; ++j) {
-            FD_SET(event_thread->RCA[j]->get_sock(), &readset);
+            FD_SET(event_thread->reqChannelArray[j]->get_sock(), &readset);
         }
 
         // Find a modified file descriptor
@@ -172,13 +176,13 @@ void* event_handler_func(void* args) {
         // Look for modified file descriptor based on ISSET flag in fd
         int i;
         for(i = 0; i < orig_wtc; ++i) {
-            if(FD_ISSET(event_thread->RCA[i]->get_sock(), &readset)) break;
+            if(FD_ISSET(event_thread->reqChannelArray[i]->get_sock(), &readset)) break;
         }
         // Pull new reply from channel
-        string reply = event_thread->RCA[i]->cread();
+        string reply = event_thread->reqChannelArray[i]->cread();
 
         // Save the fd
-        int chan_fd = event_thread->RCA[i]->get_sock();
+        int chan_fd = event_thread->reqChannelArray[i]->get_sock();
         // Save the name of the person in the reply
         string name = fd_to_name[chan_fd];
         // Put the data reply on the stats bounded buffer for the histogram
@@ -188,8 +192,8 @@ void* event_handler_func(void* args) {
 
         // While request is "DONE," decrement req thread counter, get new reply
         while(request == "DONE") {
-            rtc--;
-            if(rtc == 0) {
+            reqThreadCount--;
+            if(reqThreadCount == 0) {
                 // If req thread counter == 0, send QUITs equal to num channels to bb
                 for(int j = 0; j < orig_wtc; ++j) {
                     event_thread->bb->produce("quit");
@@ -200,16 +204,16 @@ void* event_handler_func(void* args) {
 
         // When request == quit, decrement worker counter
         if(request == "quit") {
-            wtc--;
+            workThreadCount--;
             // If worker counter is 0, send quit requests to stats threads
             // and break out of main loop
-            if(wtc==0) {
+            if(workThreadCount==0) {
                 for(auto x : event_thread->stat_map) {
                     x.second->produce("quit");
                 }
-                // Loop through RCA, cwrite (or send_request) "quit" for each
+                // Loop through reqChannelArray, cwrite (or send_request) "quit" for each
                 for(int j = 0; j < orig_wtc; ++j) {
-                    event_thread->RCA[j]->send_request("quit");
+                    event_thread->reqChannelArray[j]->send_request("quit");
                 }
                 break;
             }
@@ -218,7 +222,7 @@ void* event_handler_func(void* args) {
             // Change current channel to name on new request
             fd_to_name[chan_fd] = request.substr(5);
             // Write the new request to the to the channel
-            event_thread->RCA[i]->cwrite(request);
+            event_thread->reqChannelArray[i]->cwrite(request);
         }
     }
 }
@@ -259,70 +263,66 @@ int main(int argc, char * argv[]) {
     //     return 0;
     // }
 
-    int n = 0;      // Number of data requests per person
-    int b = 0;      // Size  of bounded buffer between request and worker threads
-    int w = 0;      // Number of worker threads
-    string h = "";  // Name of server host
-    int p = 0;      // Port number of server host
+    int numRequests = 0;      // Number of data requests per person
+    int buffSize    = 0;      // Size of bounded buffer between request and worker threads
+    int numWorkers  = 0;      // Number of worker threads
+    string host     = "";     // Name of server host
+    int port        = 0;      // Port number of server host
 
     // Command line arguments
     for(int i = 1; i < argc; ++i) {
         if(strcmp(argv[i], "-n") == 0) {
-            n = atoi(argv[i+1]);
+            numRequests = atoi(argv[i+1]);
         }
         else if(strcmp(argv[i], "-b") == 0) {
-            b = atoi(argv[i+1]);
+            buffSize = atoi(argv[i+1]);
         }
         else if(strcmp(argv[i], "-w") == 0) {
-            w = atoi(argv[i+1]);
-            wtc = w;
+            numWorkers = atoi(argv[i+1]);
+            workThreadCount = numWorkers;
         }
         else if(strcmp(argv[i], "-h") == 0) {
-            h = argv[i+1];
+            host = argv[i+1];
         }
         else if(strcmp(argv[i], "-p") == 0) {
-            p = atoi(argv[i+1]);
+            port = atoi(argv[i+1]);
         }
     }
 
-    BoundedBuffer bb(b);
-
-    struct timeval begin;
-    struct timeval end;
-
-    gettimeofday(&begin, 0);
+    BoundedBuffer boundedBuffer(buffSize);
 
     // Generate request threads
+    // Threads that send requests to the server
     // Pass in -n argument
     pthread_t joe_thread_r;
-    rts joe_args_r(n, &bb, "Joe Smith");
+    rts joe_args_r(numRequests, &boundedBuffer, "Joe Smith");
     pthread_create(&joe_thread_r, NULL, request_thread_func, (void*)&joe_args_r);
 
     pthread_t john_thread_r;
-    rts john_args_r(n, &bb, "John Doe");
+    rts john_args_r(numRequests, &boundedBuffer, "John Doe");
     pthread_create(&john_thread_r, NULL, request_thread_func, (void*)&john_args_r);
 
     pthread_t jane_thread_r;
-    rts jane_args_r(n, &bb, "Jane Smith");
+    rts jane_args_r(numRequests, &boundedBuffer, "Jane Smith");
     pthread_create(&jane_thread_r, NULL, request_thread_func, (void*)&jane_args_r);
 
-    rtc = 3;
+    reqThreadCount = 3;
 
     // Generate statistics threads
     pthread_t joe_thread_s;
-    BoundedBuffer joe_sbb(n);
+    BoundedBuffer joe_sbb(numRequests);
     vector<int> joe_hist(10);
     sts joe_args_s(&joe_hist, &joe_sbb);
     pthread_create(&joe_thread_s, NULL, stat_thread_func, (void*)&joe_args_s);
 
     pthread_t john_thread_s;
-    BoundedBuffer john_sbb(n);
+    BoundedBuffer john_sbb(numRequests);
     vector<int> john_hist(10);
     sts john_args_s(&john_hist, &john_sbb);
     pthread_create(&john_thread_s, NULL, stat_thread_func, (void*)&john_args_s);
 
     pthread_t jane_thread_s;
-    BoundedBuffer jane_sbb(n);
+    BoundedBuffer jane_sbb(numRequests);
     vector<int> jane_hist(10);
     sts jane_args_s(&jane_hist, &jane_sbb);
     pthread_create(&jane_thread_s, NULL, stat_thread_func, (void*)&jane_args_s);
@@ -331,17 +331,17 @@ int main(int argc, char * argv[]) {
     // NetworkRequestChannel chan("control", RequestChannel::CLIENT_SIDE);
     // atomicprint("done.");
 
-    NetworkRequestChannel* RCA[wtc];
-    for(int i = 0; i < wtc; ++i) {
+    NetworkRequestChannel* reqChannelArray[workThreadCount];
+    for(int i = 0; i < workThreadCount; ++i) {
     //     string reply = chan.send_request("newthread");
-        RCA[i] = new NetworkRequestChannel(h, p);
+        reqChannelArray[i] = new NetworkRequestChannel(host, port);
     }
     pthread_t event_handler;
     map<string, BoundedBuffer*> stat_map;
     stat_map["Joe Smith"]  = &joe_sbb;
     stat_map["John Doe"]   = &john_sbb;
     stat_map["Jane Smith"] = &jane_sbb;
-    ets e_thread_args(&bb, stat_map, RCA);
+    ets e_thread_args(&boundedBuffer, stat_map, reqChannelArray);
     pthread_create(&event_handler, NULL, event_handler_func, (void*)&e_thread_args);
 
     pthread_join(joe_thread_s, NULL);
@@ -377,8 +377,6 @@ int main(int argc, char * argv[]) {
         cout << endl;
     }
 }
-
-
 
 // int main() {
 
