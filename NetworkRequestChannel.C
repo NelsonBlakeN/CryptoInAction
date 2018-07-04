@@ -88,18 +88,22 @@ NetworkRequestChannel::NetworkRequestChannel(int new_sock) {
     socketfd = new_sock;
 }
 
+// Destructor
+// Closes socket allocated to this channel
 NetworkRequestChannel::~NetworkRequestChannel() {
     close(socketfd);
 }
 
+// Send a request on the socket, and return the response
 string NetworkRequestChannel::send_request(string request) {
     cwrite(request);
     string resp = cread();
     return resp;
 }
 
-const int MAXMSG = 255;
+const int MAXMSG = 255;     // Maximum message length
 
+// Read a message from the socket
 string NetworkRequestChannel::cread() {
     char buffer[MAXMSG];
     int numbytes = recv(socketfd, buffer, MAXMSG, 0);
@@ -116,11 +120,12 @@ string NetworkRequestChannel::cread() {
     return str;
 }
 
+// Write a message to the socket
 int NetworkRequestChannel::cwrite(string _msg) {
-    int len;
-    char s[MAXMSG];
-    strcpy(s, _msg.c_str());
-    int bytes_sent = send(socketfd, s, strlen(s)+1, 0);
+    // int len;
+    char msg[MAXMSG];
+    strcpy(msg, _msg.c_str());
+    int bytes_sent = send(socketfd, msg, strlen(msg)+1, 0);
     if(bytes_sent <= 0) {
         perror("Failed to send the request");
         exit(EXIT_FAILURE);
@@ -128,6 +133,8 @@ int NetworkRequestChannel::cwrite(string _msg) {
     return bytes_sent;
 }
 
+// Returns the file descriptor of the socket
+// for this channel
 int NetworkRequestChannel::get_sock() {
     return socketfd;
 }
