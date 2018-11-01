@@ -26,4 +26,4 @@ Below are the algorithms that (potentially) are included in this project:
 
 ### Secondary Features
 * Either a malicious server intercepts the data (client sends to eve first), or packet sniffer intercepts and tries to read message off the wire.
-* Time and plot brute force decryption attempts using known breaking algorithms (Shank's, Pohlig Hellman)
+* Time and plot brute force decryption attempts using known breaking algorithms (Shank's, Pohlig Hellman, p-1 factoring)
