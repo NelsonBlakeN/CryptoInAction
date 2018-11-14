@@ -3,7 +3,6 @@ from utilities import Utilities
 
 
 Utilities.keyserv['blake'] = 'key'
-print("Key server: {}".format(Utilities.keyserv))
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(('127.0.0.1', 8080))
