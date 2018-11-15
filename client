@@ -4,9 +4,6 @@ import socket
 from crypto.signature import Signature
 from utilities import Utilities
 
-HOST = '127.0.0.1'
-PORT = 8080
-
 class Client(object):
 
     # Create socket, keys, define algorithms
@@ -19,13 +16,13 @@ class Client(object):
         self.sign = Utilities.sign_algos[sign]
 
     # Generate public and private keys
-    # In the case of symmetric encryption, something else should happen.
+    # In the case of symmetric encryption, publish p/alpha.
     def generate_keys(self):
         return None, None
 
     # Connect to server
     def run(self):
-        self.client.connect((HOST, PORT))
+        self.client.connect((Utilities.HOST, Utilities.SERVER_PORT))
         self.key_exchange()
         message = input('Write your message: ')
 
@@ -39,19 +36,36 @@ class Client(object):
         self.client.send(signed_cipher.encode())
 
         # Recieve response
-        signed_response = self.client.recv(4096)
+        cipher_response = self.client.recv(4096)
 
-        # Verify signature
-        if Signature().verify(signed_response):
-            # Decrypt
-            cipher_response = signed_response.split(',')[1]
-            plaintext = self.decrypt(cipher_response, self.server_key)
-            print('Recieved: {}'.format(plaintext))
-        else:
-            raise Exception("Signature couldn't be verified.")
+        plaintext = self.decrypt(cipher_response, self.server_key)
+
+        print('Recieved: {}'.format(plaintext))
+
+        # # Verify signature
+        # if Signature().verify(signed_response):
+        #     # Decrypt
+        #     cipher_response = signed_response.split(',')[1]
+        #     plaintext = self.decrypt(cipher_response, self.server_key)
+        #     print('Recieved: {}'.format(plaintext))
+        # else:
+        #     raise Exception("Signature couldn't be verified.")
 
     # Exchange public keys (Diffie Hellman)
     # Use self.client to send and recieve keys
     # Store server key in self.server_key
     def key_exchange(self):
+        # Pick and publish (p, alpha)
+        ## Ask for server's, wait until it's there
+        self.client.connect((Utilities.HOST, Utilities.KEY_PORT))
+        self.client.send("symm")    # Request symmetric key
+        p_alpha = self.client.recv(1024)      # Recieve p, alpha
+        p = p_alpha.split(",")[1].split("|")[0]     # p
+        alpha = p_alpha.split(",")[1].split("|")[1] # alpha
+        # Secrety pick x/y
+        x = 2019
+        # Send alpha^x/alpha^y
+        self.client.send("symmclient,"+str(alpha^x))
+        # self.symm_key (k) = (alpha^x)^y (mod p)
+        #                   = (alpha^y)^x (mod p)
         pass
