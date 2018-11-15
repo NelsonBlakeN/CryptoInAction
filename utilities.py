@@ -10,14 +10,12 @@ class Utilities(object):
     enc_algos = {
         "rsa": enc.rsa,
         "aes": enc.aes128,
-        "des": enc.des,
         "otp": enc.one_time_pad,
         "el_gamal": enc.el_gamal
     }
     dec_algos = {
         "rsa": dec.rsa,
         "aes": dec.aes128,
-        "des": dec.des,
         "otp": dec.one_time_pad,
         "el_gamal": dec.el_gamal
     }
@@ -26,6 +24,9 @@ class Utilities(object):
         "el_gamal": sign.el_gamal,
         "dsa": sign.dsa
     }
+
+    HOST = '127.0.0.1'
+    SERVER_PORT = 8080
 
     def __init__(self):
         pass

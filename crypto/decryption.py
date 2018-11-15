@@ -4,8 +4,7 @@ class Decryption(object):
 
     # Decrpyt RSA-encrypted messages
     # cipher: the string message to decrypt
-    # key: the key used to decrypt
-    # info: a dictionary of any values (n, etc) that is necessary to decrypt
+    # key: the key used to decrypt (could be multiple values)
     def rsa(self, cipher, key={}):
         return ""
 

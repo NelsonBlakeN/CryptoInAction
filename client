@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
 import socket
-from crypto.signature import Signature
+# from crypto.signature import Signature
 from utilities import Utilities
 
 class Client(object):
 
     # Create socket, keys, define algorithms
-    def __init__(self, algo='rsa', sign='rsa'):
+    def __init__(self, algo='rsa'):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.priv_key, self.pub_key = Utilities.generate_keys()
-        self.server_key = None      # Server's public key
+        # Contains client public keys, private keys, server public keys
+        self.keychain = {}
+        self.algo = algo
         self.encrypt = Utilities.enc_algos[algo]
         self.decrypt = Utilities.dec_algos[algo]
-        self.sign = Utilities.sign_algos[sign]
+        # self.sign = Utilities.sign_algos[sign]
 
     # Generate public and private keys
     # In the case of symmetric encryption, publish p/alpha.
@@ -27,18 +28,19 @@ class Client(object):
         message = input('Write your message: ')
 
         # Encrpyt message with chosen algorithm
-        cipher = self.encrypt(message, self.priv_key)
+        cipher = self.encrypt(message, self.keychain[self.algo])
 
         # Sign message
-        signed_cipher = self.sign(cipher)
+        # signed_cipher = self.sign(cipher)
 
         # Send data
-        self.client.send(signed_cipher.encode())
+        # self.client.send(signed_cipher.encode())
+        self.client.send(cipher)
 
         # Recieve response
         cipher_response = self.client.recv(4096)
 
-        plaintext = self.decrypt(cipher_response, self.server_key)
+        plaintext = self.decrypt(cipher_response, self.keychain[self.algo])
 
         print('Recieved: {}'.format(plaintext))
 

@@ -4,7 +4,7 @@ class Encryption(object):
 
     # RSA Encryption
     # message: the string message to encrypt
-    # key: the key used to  (could be multiple values)
+    # key: the key used to encrypt (could be multiple values)
     def rsa(self, message, key={}):
         return ""
 
