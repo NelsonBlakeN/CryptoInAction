@@ -15,12 +15,6 @@ class Decryption(object):
     def aes128(self, cipher, key={}):
         return ""
 
-    # Decrpyt DES-encrypted messages
-    # cipher: the string message to decrypt
-    # key: the key used to decrypt (could be multiple values)
-    def des(self, cipher, key={}):
-        return ""
-
     # Decrpyt OTP-encrypted messages
     # cipher: the string message to decrypt
     # key: the key used to decrypt (could be multiple values)
