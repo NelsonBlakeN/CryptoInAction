@@ -20,4 +20,11 @@ class Encryption(object):
 
     # El Gamal Encryption
     def el_gamal(self, message, key):
+        p = key[0]
+        alpha = key[1]
+        beta = key[2]
+        # choose random k
+        # r=alpha**k mod p
+        # t = beta**k * message mod p
+        # return (r,t)
         return ""
