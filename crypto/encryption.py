@@ -24,4 +24,11 @@ class Encryption(object):
     # message: the string message to encrypt
     # key: the key used to encrypt (could be multiple values)
     def el_gamal(self, message, key={}):
+        p = key[0]
+        alpha = key[1]
+        beta = key[2]
+        # choose random k
+        # r=alpha**k mod p
+        # t = beta**k * message mod p
+        # return (r,t)
         return ""
