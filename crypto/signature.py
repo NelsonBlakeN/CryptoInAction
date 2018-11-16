@@ -5,10 +5,10 @@ class Signature(object):
     def rsa(self, message):
         return ""
 
-    def el_gamal(self, message, key):
-        p = key[0]
-        alpha = key[1]
-        beta = key[2]
+    def el_gamal(self, message, key={}):
+        p = key['p']
+        alpha = key['alpha']
+        beta = key['beta']
         # choose k gcd(k,p-1)=1
         # r = alpha**k mod p
         # s = k**-1 *(m-a*r) mod p-1

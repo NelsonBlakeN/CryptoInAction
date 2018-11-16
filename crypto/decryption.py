@@ -19,9 +19,9 @@ class Decryption(object):
         return ""
 
     # Decrypt El-Gamal-encrypted messages
-    def el_gamal(self, cipher, key):
-        p = key[0]
-        a = key[1]
+    def el_gamal(self, cipher, key={}):
+        p = key['p']
+        a = key['a']
         r = cipher[0]
         t = cipher[1]
         # m = t*r**-a mod p

@@ -33,3 +33,20 @@ class Utilities(object):
     @staticmethod
     def generate_keys():
         return None, None
+
+    # euclidean method of finding gcd(a,b)
+    @staticmethod
+    def egcd(a, b):
+        if a == 0:
+            return (b, 0, 1)
+        else:
+            g, y, x = Utilities.egcd(b % a, a)
+            return (g, x - (b // a) * y, y)
+    
+    @staticmethod
+    def modinv(a, n):
+        g, x, y = Utilities.egcd(a ,n)
+        if g != 1:
+            raise Exception('modular inverse does not exist')
+        else:
+            return x % n
