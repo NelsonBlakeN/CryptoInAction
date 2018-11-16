@@ -1,3 +1,5 @@
+import random
+
 class Encryption(object):
     def __init__(self):
         pass
@@ -23,12 +25,16 @@ class Encryption(object):
     # El Gamal Encryption
     # message: the string message to encrypt
     # key: the key used to encrypt (could be multiple values)
+    # encode string: int(str.encode('hex'),16)
+    # decode hex: hex[2:].decode('hex')
     def el_gamal(self, message, key={}):
-        p = key[0]
-        alpha = key[1]
-        beta = key[2]
+        p = key['p']
+        alpha = key['alpha']
+        beta = key['beta']
         # choose random k
+        k = 7 #random.randint(3,p)
         # r=alpha**k mod p
+        r = alpha**k % p
         # t = beta**k * message mod p
-        # return (r,t)
-        return ""
+        t = beta**k * int(message.encode('hex'), 16) % p
+        return (r,t)
