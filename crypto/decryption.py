@@ -1,3 +1,5 @@
+import crypto_utils as utils
+
 class Decryption(object):
     def __init__(self):
         pass
@@ -21,12 +23,17 @@ class Decryption(object):
         return ""
 
     # Decrypt El-Gamal-encrypted messages
-
     def el_gamal(self, cipher, key={}):
         p = key['p']
         a = key['a']
-        r = cipher[0]
-        t = cipher[1]
-        # m = t*r**-a mod p
-        # return m
-        return ""
+        r = int(cipher[0], 16)
+        t = int(cipher[1], 16)
+        print(r,t)
+        r_pow = pow(r, a, p)
+        r_inv = utils.modinv(r_pow, p)
+        m = pow(t*r_inv, 1, p)
+        print(m)
+        m = hex(int(m))[2:]
+        print(m)
+        #print(int(hex(m)[2:]))
+        return m.decode('hex')

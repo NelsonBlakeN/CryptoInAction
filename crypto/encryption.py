@@ -32,19 +32,19 @@ class Encryption(object):
         p = key['p']
         alpha = key['alpha']
         beta = key['beta']
-        msg = int(message.encode('hex'), 16)
+        msg = message.encode('hex')
+        print(msg)
+        msg = int(msg, 16)
+        print(msg)
         if msg > p:
             raise Exception("WeakKeyError: message is larger than prime (p) potential loss of data")
 
-        k = random.randint(3,p)
+        k = 121 #random.randint(3,p)
         r = pow(alpha, k, p)
-        t = pow(pow(beta, k, p)*msg,1,p)
+        t = pow(beta, k, p)*msg % p
+        #print(r,t)
+        hex_r = hex(int(r))[2:]
+        hex_t = hex(int(t))[2:]
 
-        str_r = str(hex(int(r)))[2:]
-        str_t = str(hex(int(t)))[2:]
-        if(len(str_r)%2==1):
-            str_r = '0'+str_r
-        if(len(str_t)%2==1):
-            str_t = '0'+str_t
-
-        return (str_r.decode('hex'), str_t.decode('hex'))
+        return (hex_r, hex_t)
+        #return (r,t)
