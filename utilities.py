@@ -1,6 +1,8 @@
 from crypto.decryption import Decryption
 from crypto.encryption import Encryption
 from crypto.signature import Signature
+import crypto_utils as utils
+import random
 
 enc = Encryption()
 dec = Decryption()
@@ -32,5 +34,12 @@ class Utilities(object):
         pass
 
     @staticmethod
-    def generate_keys():
+    def generate_keys(algo="el_gamal"):
+        prime_length = 31
+        if algo == "el_gamal":
+            p = utils.find_large_prime(prime_length)
+            alpha = utils.randroot(2, p-1)
+            a = random.randint(3, p-1)
+            beta = pow(alpha, a, p)
+            return {'p': p, 'a': a, 'alpha': alpha, 'beta': beta}
         return None, None
