@@ -28,12 +28,11 @@ class Decryption(object):
         a = key['a']
         r = int(cipher[0], 16)
         t = int(cipher[1], 16)
-        print(r,t)
+
         r_pow = pow(r, a, p)
         r_inv = utils.modinv(r_pow, p)
         m = pow(t*r_inv, 1, p)
-        print(m)
+
         m = hex(int(m))[2:]
-        print(m)
-        #print(int(hex(m)[2:]))
+        
         return m.decode('hex')

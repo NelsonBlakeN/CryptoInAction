@@ -1,5 +1,5 @@
+import crypto_utils as utils
 import random
-import math
 
 class Encryption(object):
     def __init__(self):
@@ -33,18 +33,14 @@ class Encryption(object):
         alpha = key['alpha']
         beta = key['beta']
         msg = message.encode('hex')
-        print(msg)
         msg = int(msg, 16)
-        print(msg)
         if msg > p:
             raise Exception("WeakKeyError: message is larger than prime (p) potential loss of data")
 
-        k = 121 #random.randint(3,p)
+        k = random.randint(3,p)
         r = pow(alpha, k, p)
         t = pow(beta, k, p)*msg % p
-        #print(r,t)
         hex_r = hex(int(r))[2:]
         hex_t = hex(int(t))[2:]
 
         return (hex_r, hex_t)
-        #return (r,t)
