@@ -28,7 +28,7 @@ class Client(object):
         message = input('Write your message: ')
 
         # Encrpyt message with chosen algorithm
-        cipher = self.encrypt(message, self.keychain[self.algo])
+        cipher = self.encrypt(message, self.keychain)
 
         # Sign message
         # signed_cipher = self.sign(cipher)
