@@ -14,61 +14,82 @@
 \maketitle
 
 \begin{abstract}
-    \blindtext
-    \blindtext
+    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages was necessary. Such is the beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in current popular cryptographic systems such as RSA, El Gamal, DES, Diffie-Hellman Key Exchange, and more. To do this, a client and a server are connected over the TCP/IP stack and exchange information about keys and the encryption algorithm to be used. Then, the client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we analyze and discuss the performance of each of these attack vectors.
 \end{abstract}
 
-% for the progress report only
+% for the progress report only 
 \section{Task Assignments}
 \subsection{Write Private Key Encryption}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-AES-128 & Blake & incomplete \\
-DES & Nathan & incomplete \\
-One Time Pad & N/A & incomplete	 
+    Name & Assignee & Status \\ \hline
+    AES-128 & Blake & incomplete \\
+    DES & Nathan & incomplete \\
+    One Time Pad & N/A & incomplete	 
 \end{tabular}
+
 \subsection{Write Public Key Encryption}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-RSA & Dominick & incomplete \\
-El Gamal & Nathan & complete
+    Name & Assignee & Status \\ \hline
+    RSA & Dominick & incomplete \\
+    El Gamal & Nathan & complete
 \end{tabular}
+
 \subsection{Write Signature Protocols}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-RSA & Dominick & incomplete \\
-El Gamal & Nathan & complete \\
-DSA & Nathan & incomplete	 
+    Name & Assignee & Status \\ \hline
+    RSA & Dominick & incomplete \\
+    El Gamal & Nathan & complete \\
+    DSA & Nathan & incomplete	 
 \end{tabular}
+
 \subsection{Write Decryption Attacks}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-RSA (Brute Force) & N/A & incomplete \\
-RSA (Shank's) & N/A & incomplete \\
-El Gamal (Brute Force) & N/A & incomplete \\
-El Gamal (Pollig-Hellman) & N/A & incomplete \\
-El Gamal (p-1 factoring) & N/A & incomplete \\
-DSA (Brute Force & N/A & incomplete \\
-AES-128 (Brute Force) & N/A & incomplete \\
-DES (Brute Force) & N/A & incomplete \\
-OTP (Brute Force) & N/A & incomplete 
+    Name & Assignee & Status \\ \hline
+    RSA (Brute Force) & Dominick & incomplete \\
+    RSA (Shank's) & Dominick & incomplete \\
+    El Gamal (Brute Force) & N/A & incomplete \\
+    El Gamal (Pollig-Hellman) & N/A & incomplete \\
+    El Gamal ($p-1$ factoring) & N/A & incomplete \\
+    DSA (Brute Force) & N/A & incomplete \\
+    AES-128 (Brute Force) & N/A & incomplete \\
+    DES (Brute Force) & N/A & incomplete \\
+    OTP (Brute Force) & N/A & incomplete 
 \end{tabular}
+
 \subsection{Implement Man-in-the-Middle Attacks}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-Wire Tapping & N/A & incomplete \\
-Packet Sniffing & N/A & incomplete 
+    Name & Assignee & Status \\ \hline
+    Wire Tapping & N/A & incomplete \\
+    Packet Sniffing & N/A & incomplete 
 \end{tabular}
+
 \subsection{Analyze Tasks}
 \begin{tabular}{l|l|l}
-Name & Assignee & Status \\ \hline
-Compare Private vs. Public Encryption & N/A & incomplete \\
-Compare Signature Methods & N/A & incomplete \\
-Compare Decryption Attack Methods & N/A & incomplete
+    Name & Assignee & Status \\ \hline
+    Compare Private vs. Public Encryption & N/A & incomplete \\
+    Compare Signature Methods & N/A & incomplete \\
+    Compare Decryption Attack Methods & N/A & incomplete
 \end{tabular}
 
 % for the progress report only
 \section{Timeline}
+\begin{tabular}{l|l|l}
+    Task & Assignee & Completion Date \\ \hline
+    Develop Client/Server Framework & Blake & November 1\\
+    Successfully Send Plaintext Message & Blake & November 15\\
+    Complete RSA Encryption/Decryption & Dominick & November 25\\
+    Complete El Gamal Encryption/Decryption & Nathan & November 25\\
+    Complete DES Encryption/Decryption & Nathan & November 28\\
+    Complete RSA Signature & Dominick & November 28\\
+    Complete El Gamal Signature & Nathan & November 28\\
+    Execute RSA Decryption Attack & Dominick & December 1\\
+    Execute El Gamal Decryption Attack & Nathan & December 1\\
+    Execute DES Decryption Attack & Blake & December 1\\
+    Execute MITM Attacks & All Members & December 3\\
+    Write Up Attack Successes/Failures & All Members & December 3\\
+    Project Presentation & All Members & December 4/6\\ 
+    Write Final Report & All Members & December 8
+\end{tabular}
 
 % for the progress report and the final report
 \section{Introduction}
