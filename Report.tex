@@ -18,17 +18,16 @@
 \maketitle
 
 \begin{abstract}
-    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages was necessary. Such is the beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in current popular cryptographic systems such as RSA, El Gamal, DES, Diffie-Hellman Key Exchange, and more. To do this, a client and a server are connected over the TCP/IP stack and exchange information about keys and the encryption algorithm to be used. Then, the client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we analyze and discuss the performance of each of these attack vectors.
+    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages was necessary. Such is the beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in current popular cryptographic systems such as RSA, El Gamal, and DES. To do this, a client and a server are connected over the TCP/IP stack and exchange information about keys and the encryption algorithm to be used. Then, the client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we analyze and discuss the performance of each of these attack vectors.
 \end{abstract}
 
 % for the progress report only 
 \section{Task Assignments}
-\subsection{Write Private Key Encryption}
+\subsection{Write Symmetric Key Encryption}
 \begin{tabular}{l|l|l}
     Name & Assignee & Status \\ \hline
-    AES-128 & Blake & incomplete \\
-    DES & Nathan & incomplete \\
-    One Time Pad & N/A & incomplete	 
+    DES & Blake & incomplete \\
+    One Time Pad & Blake & incomplete	 
 \end{tabular}
 
 \subsection{Write Public Key Encryption}
@@ -51,28 +50,24 @@
     Name & Assignee & Status \\ \hline
     RSA (Brute Force) & Dominick & incomplete \\
     RSA (Shank's) & Dominick & incomplete \\
-    El Gamal (Brute Force) & N/A & incomplete \\
-    El Gamal (Pollig-Hellman) & N/A & incomplete \\
-    El Gamal ($p-1$ factoring) & N/A & incomplete \\
-    DSA (Brute Force) & N/A & incomplete \\
-    AES-128 (Brute Force) & N/A & incomplete \\
-    DES (Brute Force) & N/A & incomplete \\
-    OTP (Brute Force) & N/A & incomplete 
+    El Gamal (Brute Force) & Nathan & incomplete \\
+    El Gamal (Pollig-Hellman) & Nathan & incomplete \\
+    El Gamal ($p-1$ factoring) & Nathan & incomplete \\
+    DES (Brute Force) & Blake & incomplete \\
+    OTP (Brute Force) & Blake & incomplete 
 \end{tabular}
 
 \subsection{Implement Man-in-the-Middle Attacks}
 \begin{tabular}{l|l|l}
     Name & Assignee & Status \\ \hline
-    Wire Tapping & N/A & incomplete \\
-    Packet Sniffing & N/A & incomplete 
+    Packet Sniffing & Blake & incomplete 
 \end{tabular}
 
 \subsection{Analyze Tasks}
 \begin{tabular}{l|l|l}
     Name & Assignee & Status \\ \hline
-    Compare Private vs. Public Encryption & N/A & incomplete \\
-    Compare Signature Methods & N/A & incomplete \\
-    Compare Decryption Attack Methods & N/A & incomplete
+    Compare Private vs. Public Encryption & Blake & incomplete \\
+    Compare Decryption Attack Methods & Nathan and Dom & incomplete
 \end{tabular}
 
 % for the progress report only
@@ -97,12 +92,12 @@
 
 % for the progress report and the final report
 \section{Introduction}
-This project contains several classes and Python code files which serve to make a generic client and server object to send encrypted messages using the TCP/IP stack. By default, the client and the server will use RSA encryption, but El Gamal, DES, or a One-Time-Pad can be used as well. 
+Mathematicians and computer scientists have spent years developing new algorithms that allow for the safe transfer of information from one party to another. These algorithms have come down to two main approaches: symmetric key encryption, where both parties share a single key used to encrypt and decrypt a message, and public key encryption, where both parties use a common key for encryption, but also have their own, private keys used in decryption. In our schooling, we have learned algorithms using both approaches, from both this class and MATH 470 - Communications and Cryptography. In this project, we will implement a few of these algorithms using Python and TCP sockets, and evaluate their effectiveness. We will first demonstrate the efficiency of the algorithm: how long it takes to get from plain-text to plain-text end to end compared to the length of the key. Next, we will use topics discussed previously in this class regarding packet sniffing to intercept and attempt to decrypt the message, using various methods discussed both in this class and previously in MATH 470. By timing both the message transfer and the ability to crack the decryption, we will put together a comprehensive study on the effectiveness of the algorithms individually and form a comparison between symmetric key encryption and private key encryption.
 
 % for the progress report and the final report
 \section{Background and Literature Review}
 
-\iffalse 
+\iffalse
 % an example bibliography
 \newpage
 
