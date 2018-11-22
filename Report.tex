@@ -7,6 +7,7 @@
 \usepackage{hyperref} % for links
 \usepackage{blindtext} % for Latin trash
 \usepackage{setspace} % for line spacing
+\usepackage{indentfirst}
 
 \linespread{2.5}
 %\doublespacing
@@ -96,18 +97,41 @@ Mathematicians and computer scientists have spent years developing new algorithm
 
 % for the progress report and the final report
 \section{Background and Literature Review}
+Both public and private key encryption have dated histories. Public key cryptography, specifically RSA and Diffie-Hellman, were conceived by British cryptographers and mathematicians in the early 1970s. They were used by both the British and American government for over 20 years before finally being declassified and made public. A few years later, both algorithms were independently developed and published by their respective namesakes. \\
+Meanwhile, symmetric key encryption was based on the one time pad encryption scheme, and the similarities are apparent, as many stream and block ciphers (two approaches to symmetric encryption) are based on each bit, or block, being used in an exclusive OR operation. One time pad and block ciphers can be traced back to as early as 1949 when it was proven to be secure. The Data Encryption Standard is a well known symmetric algorithm, dating back to 1975 when it was first published, but there are more recent algorithms such as AES, published in 1998. This project will combine all of these into a comprehensive review of effectiveness and efficiency.
 
-\iffalse
+
+
 % an example bibliography
 \newpage
 
 \begin{thebibliography}{9}
 
     \bibitem{ieee}
-    IEEE-CS/ACM Joint Task Force on Software Engineering Ethics and Professional Practices\\
+    IEEE-CS/ACM Joint Task Force on Software Engineering Ethics and Professional Practices.\
     \texttt{https://www.computer.org/web/education/code-of-ethics}
+    
+    \bibitem{ieee}
+    A Public Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms.\
+    \texttt{https://ieeexplore.ieee.org/document/1057074/}
+    
+    \bibitem{philzimmerman}
+    Why I Wrote PGP.\
+    \texttt{https://www.philzimmermann.com/EN/essays/WhyIWrotePGP.html}
+    
+    \bibitem{stanford}
+    The Diffie Hellman Problem.\
+    \texttt{https://crypto.stanford.edu/~dabo/pubs/papers/DDH.pdf}
+    
+    \bibitem{mit}
+    A Method for Obtaining Digital Signatures and Public Key Cryptosystems.\
+    \texttt{https://people.csail.mit.edu/rivest/Rsapaper.pdf}
+    
+    \bibitem{academia}
+    Cryptanalysis of Key Exchange Method using Computational Intelligence Guided Multiplayer Perception in Wireless Communication.\
+    \texttt{http://www.academia.edu/36833313/CRYPTANALYSIS_OF_KEY_EXCHANGE_METHOD_USING_COMPUTATIONAL_INTELLIGENCE_GUIDED_MULTILAYER_PERCEPTRON_IN_WIRELESS_COMMUNICATION_CKEMLP}
 
 \end{thebibliography}
-\fi
+
 
 \end{document}
