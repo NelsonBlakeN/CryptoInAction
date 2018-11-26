@@ -38,8 +38,36 @@ class Signature(object):
             hex_s = hex_s[:-1]
         return (message, hex_r, hex_s)
 
-    def dsa(self, message):
-        pass
+    def dsa(self, message, key={}):
+        p = key['p']
+        q = key['q']
+        a = key['a']
+        msg = message.encode('hex')
+        msg = int(msg, 16)
+        if msg > q:
+            raise Exception("WeakKeyError: message is larger than prime (p) potential loss of data")
+        
+        if pow(key['alpha'], a, p) != 1:
+            raise Exception("KeyError: private key is not configured correctly")
+
+        # pick k from 1 to q-1
+        k = random.randint(1, q-1)
+
+        # r = (a^k mod p) mod q
+        r = pow(a, k, p) % q
+
+        # s = k^(-1)(m + a*r) mod q
+        kinv = utils.modinv(k, q)
+        ar = pow(a * r, 1, q)
+        s = pow(kinv * (msg + ar), 1, q)
+
+        hex_r = hex(int(r))[2:]
+        hex_s = hex(int(s))[2:]
+        if hex_r[-1] == "L":
+            hex_r = hex_r[:-1]
+        if hex_s[-1] == "L":
+            hex_s = hex_s[:-1]
+        return (message, hex_r, hex_s)
 
     def verify(self, signedmsg, key, option='e'):
         ''' Options:
@@ -65,3 +93,26 @@ class Signature(object):
             v1 = (betator * rtos) % p
             v2 = pow(alpha, msg, p)
             return v1 == v2
+        elif option == 'r':
+            return True
+        elif option == 'd':
+            r = int(signedmsg[1], 16)
+            s = int(signedmsg[2], 16)
+
+            p = key['p']
+            q = key['q']
+            alpha = key['alpha']
+            beta = key['beta']
+
+            sinv = utils.modinv(s, q)
+            # u1 = s^(-1)*m mod q
+            u1 = pow(sinv*msg, 1, q)
+
+            # u2 = s^(-1)*r mod q
+            u2 = pow(sinv*r, 1, q)
+
+            # v = (alpha^u1 * beta^u2 mod p)mod q
+            v = pow(pow(alpha, u1, p) * pow(beta, u2, p), 1, p) % q
+            return v == r
+        else:
+            raise Exception("Unkown verification option:",option,"(e: El Gamal, r: RSA, d: DSA)")
