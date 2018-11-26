@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass[12pt]{report}
 
 \usepackage{amsmath} % for equations
 \usepackage{graphicx} % for adding images
@@ -6,6 +6,11 @@
 \usepackage{listings} % for code blocks
 \usepackage{hyperref} % for links
 \usepackage{blindtext} % for Latin trash
+\usepackage{setspace} % for line spacing
+\usepackage{indentfirst}
+
+\linespread{2.5}
+%\doublespacing
 
 \title{CSCE 465 Cryptography in Action Progress Report}
 \author{Nathan Brockway\\Dominick Fabian\\Blake Nelson}
@@ -14,33 +19,119 @@
 \maketitle
 
 \begin{abstract}
-    \blindtext
-    \blindtext
+    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages was necessary. Such is the beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in current popular cryptographic systems such as RSA, El Gamal, and DES. To do this, a client and a server are connected over the TCP/IP stack and exchange information about keys and the encryption algorithm to be used. Then, the client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we analyze and discuss the performance of each of these attack vectors.
 \end{abstract}
 
-% for the progress report only
+% for the progress report only 
 \section{Task Assignments}
+\subsection{Write Symmetric Key Encryption}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    DES & Blake & incomplete \\
+    One Time Pad & Blake & incomplete	 
+\end{tabular}
+
+\subsection{Write Public Key Encryption}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    RSA & Dominick & incomplete \\
+    El Gamal & Nathan & complete
+\end{tabular}
+
+\subsection{Write Signature Protocols}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    RSA & Dominick & incomplete \\
+    El Gamal & Nathan & complete \\
+    DSA & Nathan & incomplete	 
+\end{tabular}
+
+\subsection{Write Decryption Attacks}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    RSA (Brute Force) & Dominick & incomplete \\
+    RSA (Shank's) & Dominick & incomplete \\
+    El Gamal (Brute Force) & Nathan & incomplete \\
+    El Gamal (Pollig-Hellman) & Nathan & incomplete \\
+    El Gamal ($p-1$ factoring) & Nathan & incomplete \\
+    DES (Brute Force) & Blake & incomplete \\
+    OTP (Brute Force) & Blake & incomplete 
+\end{tabular}
+
+\subsection{Implement Man-in-the-Middle Attacks}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    Packet Sniffing & Blake & incomplete 
+\end{tabular}
+
+\subsection{Analyze Tasks}
+\begin{tabular}{l|l|l}
+    Name & Assignee & Status \\ \hline
+    Compare Private vs. Public Encryption & Blake & incomplete \\
+    Compare Decryption Attack Methods & Nathan and Dom & incomplete
+\end{tabular}
 
 % for the progress report only
 \section{Timeline}
+\begin{tabular}{l|l|l|l}
+    Task & Assignee & Completion Date & Work Effort\\ \hline
+    Develop Client/Server Framework & Blake & November 1 & 1 week\\
+    Successfully Send Plaintext Message & Blake & November 15 & 2 days\\
+    Complete RSA Encryption/Decryption & Dominick & November 25 & 1 day\\
+    Complete El Gamal Encryption/Decryption & Nathan & November 25 & 1 day\\
+    Complete DES Encryption/Decryption & Nathan & November 28 & 1 day\\
+    Complete RSA Signature & Dominick & November 28 & 1 day\\
+    Complete El Gamal Signature & Nathan & November 28 & 1 day\\
+    Execute RSA Decryption Attack & Dominick & December 1 & 3 days\\
+    Execute El Gamal Decryption Attack & Nathan & December 1 & 3 days\\
+    Execute DES Decryption Attack & Blake & December 1 & 3 days\\
+    Execute MITM Attacks & All Members & December 3 & 2 days\\
+    Write Up Attack Successes/Failures & All Members & December 3 & 1 day\\
+    Project Presentation & All Members & December 4/6\\ 
+    Write Final Report & All Members & December 8 & 2 days
+\end{tabular}
 
 % for the progress report and the final report
 \section{Introduction}
+Mathematicians and computer scientists have spent years developing new algorithms that allow for the safe transfer of information from one party to another. These algorithms have come down to two main approaches: symmetric key encryption, where both parties share a single key used to encrypt and decrypt a message, and public key encryption, where both parties use a common key for encryption, but also have their own, private keys used in decryption. In our schooling, we have learned algorithms using both approaches, from both this class and MATH 470 - Communications and Cryptography. In this project, we will implement a few of these algorithms using Python and TCP sockets, and evaluate their effectiveness. We will first demonstrate the efficiency of the algorithm: how long it takes to get from plain-text to plain-text end to end compared to the length of the key. Next, we will use topics discussed previously in this class regarding packet sniffing to intercept and attempt to decrypt the message, using various methods discussed both in this class and previously in MATH 470. By timing both the message transfer and the ability to crack the decryption, we will put together a comprehensive study on the effectiveness of the algorithms individually and form a comparison between symmetric key encryption and private key encryption.
 
 % for the progress report and the final report
 \section{Background and Literature Review}
+Both public and private key encryption have dated histories. Public key cryptography, specifically RSA and Diffie-Hellman, were conceived by British cryptographers and mathematicians in the early 1970s. They were used by both the British and American government for over 20 years before finally being declassified and made public. A few years later, both algorithms were independently developed and published by their respective namesakes. \\
+Meanwhile, symmetric key encryption was based on the one time pad encryption scheme, and the similarities are apparent, as many stream and block ciphers (two approaches to symmetric encryption) are based on each bit, or block, being used in an exclusive OR operation. One time pad and block ciphers can be traced back to as early as 1949 when it was proven to be secure. The Data Encryption Standard is a well known symmetric algorithm, dating back to 1975 when it was first published, but there are more recent algorithms such as AES, published in 1998. This project will combine all of these into a comprehensive review of effectiveness and efficiency.
 
-\iffalse 
+
+
 % an example bibliography
 \newpage
 
 \begin{thebibliography}{9}
 
     \bibitem{ieee}
-    IEEE-CS/ACM Joint Task Force on Software Engineering Ethics and Professional Practices\\
+    IEEE-CS/ACM Joint Task Force on Software Engineering Ethics and Professional Practices.\
     \texttt{https://www.computer.org/web/education/code-of-ethics}
+    
+    \bibitem{ieee}
+    A Public Key Cryptosystem and a Signature Scheme Based on Discrete Logarithms.\
+    \texttt{https://ieeexplore.ieee.org/document/1057074/}
+    
+    \bibitem{philzimmerman}
+    Why I Wrote PGP.\
+    \texttt{https://www.philzimmermann.com/EN/essays/WhyIWrotePGP.html}
+    
+    \bibitem{stanford}
+    The Diffie Hellman Problem.\
+    \texttt{https://crypto.stanford.edu/~dabo/pubs/papers/DDH.pdf}
+    
+    \bibitem{mit}
+    A Method for Obtaining Digital Signatures and Public Key Cryptosystems.\
+    \texttt{https://people.csail.mit.edu/rivest/Rsapaper.pdf}
+    
+    \bibitem{academia}
+    Cryptanalysis of Key Exchange Method using Computational Intelligence Guided Multiplayer Perception in Wireless Communication.\
+    \texttt{http://www.academia.edu/36833313/CRYPTANALYSIS_OF_KEY_EXCHANGE_METHOD_USING_COMPUTATIONAL_INTELLIGENCE_GUIDED_MULTILAYER_PERCEPTRON_IN_WIRELESS_COMMUNICATION_CKEMLP}
 
 \end{thebibliography}
-\fi
+
 
 \end{document}
