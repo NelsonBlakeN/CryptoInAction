@@ -47,7 +47,7 @@ class Signature(object):
         if msg > q:
             raise Exception("WeakKeyError: message is larger than prime (p) potential loss of data")
         
-        if pow(key['alpha'], a, p) != 1:
+        if pow(key['alpha'], (p-1)/2, p) != 1:
             raise Exception("KeyError: private key is not configured correctly")
 
         # pick k from 1 to q-1
