@@ -14,6 +14,19 @@ def modinv(a, n):
     else:
         return x % n
 
+def isRoot(r, base):
+    table = []
+    last = 0
+    
+    for i in range(2, base-1):
+        last = pow(r, i, base)
+        if last in table:
+            return False
+        table.append(last)
+    
+    #print(table)
+    return True
+
 def isPrime(n, certainty=5):
     # n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (reccommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)
     if n <= 1:
@@ -43,7 +56,7 @@ def isPrime(n, certainty=5):
         for i in range(1, k):
             b[i] = pow(b[i-1], 2, n)
             if b[i] == 1:
-                g, _, _ = egcd(b[i-1]-1, n)
+                #g, _, _ = egcd(b[i-1]-1, n)
                 #print("Common factor with {}: {}".format(b[i-1], g))
                 flags[f] = False
                 break
@@ -53,7 +66,7 @@ def isPrime(n, certainty=5):
         
         if b[k-1] != 0 and b[k-1] != 1:
             if b[k-1] != n-1:
-                g, _, _ = egcd(b[k-1]-1, n)
+                #g, _, _ = egcd(b[k-1]-1, n)
                 #print("Common factor with {}: {}".format(b[k-1], g))
                 flags[f] = False
             else:
@@ -65,12 +78,19 @@ def isPrime(n, certainty=5):
         return True
 
 def find_large_prime(size=31):
-    if size > 196:
-        raise ValueError("Size given: {} (max size supported is 196)".format(size))
-    p = random.randint(10**(size - 1), 10**size - 1)
+    if size > 512:
+        raise ValueError("Size given: {} (max size supported is 512)".format(size))
+    p = random.randrange(10**(size - 1), 10**size - 1, 1)
     while not isPrime(p):
-        p = random.randint(10**(size - 1), 10**size - 1)
+        p = random.randrange(10**(size - 1), 10**size - 1, 1)
     return p
 
-def randroot(min=2, max=11):
-    return 2
+def randroot(base, min=2, max=11):
+    r = random.randint(min, max)
+    i = 0
+    while not isRoot(r, base):
+        r = random.randint(min, max)
+        i += 1
+        if i == 2*(max - min + 1):
+            raise Exception("RootError: no root for base {} in range {}-{}".format(base, max, min))
+    return r
