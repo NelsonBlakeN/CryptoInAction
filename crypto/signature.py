@@ -42,25 +42,27 @@ class Signature(object):
         p = key['p']
         q = key['q']
         a = key['a']
+        alpha = key['alpha']
+
         msg = message.encode('hex')
         msg = int(msg, 16)
+
         if msg > q:
-            raise Exception("WeakKeyError: message is larger than prime (p) potential loss of data")
+            raise Exception("WeakKeyError: message is larger than prime (q) potential loss of data")
         
         if pow(key['alpha'], (p-1)/2, p) != 1:
             raise Exception("KeyError: private key is not configured correctly")
 
         # pick k from 1 to q-1
         k = random.randint(1, q-1)
-
         # r = (a^k mod p) mod q
-        r = pow(a, k, p) % q
+        r = pow(alpha, k, p) % q
 
         # s = k^(-1)(m + a*r) mod q
         kinv = utils.modinv(k, q)
         ar = pow(a * r, 1, q)
         s = pow(kinv * (msg + ar), 1, q)
-
+        
         hex_r = hex(int(r))[2:]
         hex_s = hex(int(s))[2:]
         if hex_r[-1] == "L":
@@ -98,13 +100,14 @@ class Signature(object):
         elif option == 'd':
             r = int(signedmsg[1], 16)
             s = int(signedmsg[2], 16)
-
+            
             p = key['p']
             q = key['q']
             alpha = key['alpha']
             beta = key['beta']
 
             sinv = utils.modinv(s, q)
+            
             # u1 = s^(-1)*m mod q
             u1 = pow(sinv*msg, 1, q)
 
