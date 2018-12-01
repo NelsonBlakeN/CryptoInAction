@@ -1,5 +1,4 @@
 import crypto_utils as utils
-import random
 
 class Encryption(object):
     def __init__(self):
@@ -9,7 +8,12 @@ class Encryption(object):
     # message: the string message to encrypt
     # key: the key used to encrypt (could be multiple values)
     def rsa(self, message, key={}):
-        return ""
+        e = key['e']
+        p = key['p']
+        q = key['q']
+        n = p * q
+        msg = message.encode('hex')
+        return math.pow(msg, e, n)
 
     # AES-128 Encryption
     # message: the string message to encrypt

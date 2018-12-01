@@ -1,12 +1,18 @@
 import crypto_utils as utils
-import random
 
 class Signature(object):
     def __init__(self):
         pass
 
-    def rsa(self, message):
-        return ""
+    def rsa(self, message, key={}):
+        d = key['d']
+        p = key['p']
+        q = key['q']
+        n = p * q
+        msg = message.encode('hex')
+        # s{m} = m ^ d mod n
+        sig = math.pow(msg, d, n)
+        return (msg, sig)
 
     def el_gamal(self, message, key={}):
         p = key['p']
@@ -95,8 +101,11 @@ class Signature(object):
             v1 = (betator * rtos) % p
             v2 = pow(alpha, msg, p)
             return v1 == v2
+
+        # rsa
         elif option == 'r':
             return True
+        
         elif option == 'd':
             r = int(signedmsg[1], 16)
             s = int(signedmsg[2], 16)
