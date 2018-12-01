@@ -37,7 +37,7 @@ class Utilities(object):
     def generate_keys(algo="el_gamal", prime_length = 31):
         if algo == "el_gamal":
             p = cutils.find_large_prime(prime_length)
-            alpha = cutils.randroot(2, p-1)
+            alpha = cutils.randroot(p, 2, p-1)
             a = random.randint(3, p-1) # private key
             beta = pow(alpha, a, p)
             return {'p': p, 'alpha': alpha, 'beta': beta, 'a': a}

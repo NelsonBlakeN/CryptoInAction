@@ -1,5 +1,6 @@
 import random, math
 # euclidean method of finding gcd(a,b)
+# may need replacing for large numbers
 def egcd(a, b):
     if a == 0:
         return (b, 0, 1)
@@ -14,46 +15,49 @@ def modinv(a, n):
     else:
         return x % n
 
-def dlog(x, ord, base=10):
+def dlog(x, order, base=10):
     # discrete log for modulus logarithms
+    # base^y = x mod ord
     y = math.log(x,base)
     i = 1
     if int(y) == 0:
-        y = math.log(x + i*ord, base)
+        y = math.log(x + i*order, base)
         i += 1
 
     while y % int(y) != 0:
-        y = math.log(x + i*ord, base)
-        if y > ord - 1:
-            raise Exception("Discrete log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,ord))
+        y = math.log(x + i*order, base)
+        if y > order - 1:
+            raise Exception("Discrete log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,order))
         i += 1
     
     return int(y)
 
 def isRoot(r, base):
-    # Tabular method too slow O(base) when checking to base/2
-    # Theoretically improved to O(log(base)) when checking to log(base)
-    # confirmed by: https://www.wolframalpha.com/widgets/view.jsp?id=ef51422db7db201ebc03c8800f41ba99
-    table = []
-    last0 = 0
-    last1 = 0
+    # 1. Tabular method too slow O(base) when checking to base/2
+    '''table = []
+    last = 0
     i = 2
-    while i < math.log(base):
-        last0 = pow(r, i, base)
-        if last0 in table:
+    while i < base / 2:
+        last = pow(r, i, base)
+        if last in table:
             return False
-        table.append(last0)
-        last1 = pow(r, i + int((base-1)/2), base)
-        if last1 in table:
-            return False
-        table.append(last1)
-        i += 1
-    
-    #print(table)
-    return True
-    '''#Log method even slower
-    k = random.randint(2, base-2)
+        table.append(last)
+        i += 1'''
+
+    # 2. Log method even slower O(base*log(base))
+    '''k = random.randint(2, base-2)
     return pow(r, random.randint(1, base-2)*(base-1), base) == 1 and dlog(pow(r, k, base), base, r) % (base - 1) == k'''
+    
+    # 3. BEST APPROACH: O(f + p1) where f is the number of prime factors and p1 is the second largest prime
+    factors = prime_factors(base-1)
+    for factor in factors:
+        if pow(r, (base-1)/ factor, base) != 1:
+            continue
+        else:
+            #print("Bad Factor:",factor)
+            return False
+
+    return True
 
 def isPrime(n, certainty=5):
     # n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (reccommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)
@@ -109,12 +113,13 @@ def nextPrime(n):
     return find_nearby_prime(n+1)
 
 def find_nearby_prime(n):
+    p = 0
     if n % 2 == 0:
-        min = n + 1
+        p = n + 1
     else:
-        min = n
-    p = min
-    while p < 2*min:
+        p = n
+
+    while p < 2*n:
         #print("Testing Prime:",p)
         if isPrime(p):
             return p
@@ -129,6 +134,30 @@ def find_large_prime(size=31):
         p = random.randrange(10**(size - 1), 10**size - 1, 1)
     return p
 
+def prime_factors(n):
+    if n <= 1:
+        return []
+    factors = []
+    i = n
+    last = i
+    prime = 2
+    while i > 1:
+        i %= prime
+        if i == 0:
+            g, _, _ = egcd(prime, last)
+            while g == prime:
+                last /= prime
+                g, _, _ = egcd(prime, last)
+            #print("Found factor:",prime)
+            factors.append(prime)
+            if isPrime(last):
+                factors.append(last)
+                break
+        i = last
+        prime = nextPrime(prime)
+
+    return factors
+
 def randroot(base, min=2, max=11):
     r = random.randint(min, max)
     i = 0
@@ -138,5 +167,5 @@ def randroot(base, min=2, max=11):
         #print("Checking root:",r)
         i += 1
         if i == 2*(max - min + 1):
-            raise Exception("RootError: no root for base {} in range {}-{}".format(base, max, min))
+            raise Exception("RootError: no root for base {} in range {}-{}".format(base, min, max))
     return r
