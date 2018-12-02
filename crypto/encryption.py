@@ -13,7 +13,8 @@ class Encryption(object):
         q = key['q']
         n = p * q
         msg = message.encode('hex')
-        return math.pow(msg, e, n)
+        msg = int(msg, 16)
+        return pow(msg, e, n)
 
     # AES-128 Encryption
     # message: the string message to encrypt

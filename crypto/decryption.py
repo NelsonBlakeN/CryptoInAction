@@ -13,7 +13,8 @@ class Decryption(object):
         q = key['q']
         n = p * q
         msg = message.encode('hex')
-        return math.pow(msg, d, n)
+        msg = int(msg, 16)
+        return pow(msg, d, n)
 
     # Decrypt AES-128-encrypted messages
     # cipher: the string message to decrypt

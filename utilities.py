@@ -2,7 +2,6 @@ from crypto.decryption import Decryption
 from crypto.encryption import Encryption
 from crypto.signature import Signature
 import crypto_utils as cutils
-import random
 
 enc = Encryption()
 dec = Decryption()
@@ -51,7 +50,6 @@ class Utilities(object):
             while ((d * e) % phi) != 1:
                 d += 1
             return {'d': d, 'e': e, 'p': p, 'q': q}
-
 
         elif algo == "dsa":
             q = cutils.find_large_prime(prime_length)
