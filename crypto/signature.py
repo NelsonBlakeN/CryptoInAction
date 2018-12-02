@@ -9,20 +9,18 @@ class Signature(object):
         p = key['p']
         q = key['q']
         n = p * q
+ 
         msg = message.encode('hex')
         msg = int(msg, 16)
 
         if msg > n:
             raise Exception("WeakKeyError: message is larger than n potential loss of data")
 
-        # s{m} = m ^ d mod n
-        sig = pow(msg, d, n)
-
-        # remove the 0x... and the L at the end
-        sig = hex(int(sig))[2:]
-        if sig[-1] == "L":
-            sig = sig[:-1]
-        return (msg, sig)
+        msg = pow(msg, d, n)
+        msg = hex(int(msg))[2:]
+        if msg[-1] == "L":
+            msg = msg[:-1]
+        return (message, msg)
 
     def el_gamal(self, message, key={}):
         p = key['p']
@@ -114,14 +112,15 @@ class Signature(object):
 
         # rsa
         elif option == 'r':
-            msg = int(signedmsg[0], 16)
             sig = int(signedmsg[1], 16)
 
             e = key['e']
-            n = key['n']
+            p = key['p']
+            q = key['q']
+            n = p * q
 
-            test = pow(msg, e, n)
-            return test == sig
+            test = pow(sig, e, n)
+            return msg == test
 
         elif option == 'd':
             r = int(signedmsg[1], 16)
