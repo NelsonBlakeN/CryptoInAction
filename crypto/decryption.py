@@ -8,7 +8,12 @@ class Decryption(object):
     # cipher: the string message to decrypt
     # key: the key used to decrypt (could be multiple values)
     def rsa(self, cipher, key={}):
-        return ""
+        d = key['d']
+        p = key['p']
+        q = key['q']
+        n = p * q
+        msg = message.encode('hex')
+        return math.pow(msg, d, n)
 
     # Decrypt AES-128-encrypted messages
     # cipher: the string message to decrypt
