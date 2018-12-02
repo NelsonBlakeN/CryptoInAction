@@ -47,7 +47,7 @@ class Utilities(object):
             while True:
                 p = q = cutils.find_large_prime(prime_length)
                 while p == q:
-                    p = cutils.find_nearby_prime(prime_length)
+                    p = cutils.find_large_prime(prime_length)
                 phi = (p - 1) * (q - 1)
                 try:
                     d = cutils.modinv(e, phi)
