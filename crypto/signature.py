@@ -1,4 +1,5 @@
 import crypto_utils as utils
+import random
 
 class Signature(object):
     def __init__(self):
@@ -11,7 +12,7 @@ class Signature(object):
         n = p * q
         msg = message.encode('hex')
         # s{m} = m ^ d mod n
-        sig = math.pow(msg, d, n)
+        sig = pow(msg, d, n)
         return (msg, sig)
 
     def el_gamal(self, message, key={}):

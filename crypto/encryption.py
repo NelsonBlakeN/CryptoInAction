@@ -1,4 +1,5 @@
 import crypto_utils as cutils
+import random
 
 class Encryption(object):
     def __init__(self):
@@ -13,7 +14,7 @@ class Encryption(object):
         q = key['q']
         n = p * q
         msg = message.encode('hex')
-        return math.pow(msg, e, n)
+        return pow(msg, e, n)
 
     # AES-128 Encryption
     # message: the string message to encrypt

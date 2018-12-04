@@ -1,4 +1,4 @@
-import random, math
+import random, math, time
 # euclidean method of finding gcd(a,b)
 # may need replacing for large numbers
 def egcd(a, b):
@@ -15,9 +15,9 @@ def modinv(a, n):
     else:
         return x % n
 
-def dlog(x, order, base=10):
-    # discrete log for modulus logarithms
-    # base^y = x mod ord
+def dlog(x, order, base=10, limit=None):
+    '''discrete log for modulus logarithms base^y = x mod order'''
+    ''' bad approach O(k) where base^y = x + k*order
     y = math.log(x,base)
     i = 1
     if int(y) == 0:
@@ -26,11 +26,65 @@ def dlog(x, order, base=10):
 
     while y % int(y) != 0:
         y = math.log(x + i*order, base)
+        #print(y, i)
+        #time.sleep(1)
         if y > order - 1:
-            raise Exception("Discrete log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,order))
+            raise Exception("Discrete Log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,order))
         i += 1
+        if i > 1000:
+            return int(math.log(x + (10**10)*order, base)+1)
     
-    return int(y)
+    return int(y)'''
+    base_inv = modinv(base, order)
+    N = int(math.ceil(order**0.5)) if limit is None else int(math.ceil(limit**0.5))
+    
+    j_list = []
+    k_list = []
+    i = 0
+    match = set([])
+    while i <= N:
+        j_list.append(pow(base, i, order))
+        k_list.append(pow(x*pow(base_inv, N*i, order), 1, order))
+        '''if len(match) != 0:
+            break'''
+        i += 1
+
+    #print(j_list)
+    #print(k_list)
+    match = set(j_list).intersection(k_list)
+
+    if len(match) == 0:
+        raise Exception("Discrete Log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,order))
+
+    match = list(match)[0]
+    j = j_list.index(match)
+    k = k_list.index(match)
+
+    return j + N*k
+
+def rem(a, x, b, y):
+    '''Chinese Remainder function returns c given:
+        n = a mod x &
+        n = b mod y
+        then n = c mod x*y
+    '''
+    diff = 0
+    left = x
+    right = y
+    if a < b:
+        diff = b - a
+    elif a > b:
+        diff = a - b
+        left = y
+        right = x
+
+    solution = pow(modinv(left, right)*diff, 1, right)
+    
+    if a > b:
+        return b + y*solution
+    else:
+        return a + x*solution
+
 
 def isRoot(r, base):
     # 1. Tabular method too slow O(base) when checking to base/2
@@ -150,7 +204,7 @@ def prime_factors(n):
                 g, _, _ = egcd(prime, last)
             #print("Found factor:",prime)
             factors.append(prime)
-            if isPrime(last):
+            if last != 1 and isPrime(last):
                 factors.append(last)
                 break
         i = last
