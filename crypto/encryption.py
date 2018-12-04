@@ -13,8 +13,18 @@ class Encryption(object):
         p = key['p']
         q = key['q']
         n = p * q
+
         msg = message.encode('hex')
-        return pow(msg, e, n)
+        msg = int(msg, 16)
+
+        if msg > n:
+            raise Exception("WeakKeyError: message is larger than n potential loss of data")
+
+        msg = pow(msg, e, n)
+        msg = hex(int(msg))[2:]
+        if msg[-1] == "L":
+            msg = msg[:-1]
+        return msg
 
     # AES-128 Encryption
     # message: the string message to encrypt

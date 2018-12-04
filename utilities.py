@@ -2,7 +2,6 @@ from crypto.decryption import Decryption
 from crypto.encryption import Encryption
 from crypto.signature import Signature
 import crypto_utils as cutils
-import random
 
 enc = Encryption()
 dec = Decryption()
@@ -43,15 +42,20 @@ class Utilities(object):
             return {'p': p, 'alpha': alpha, 'beta': beta, 'a': a}
 
         elif algo == "rsa":
-            p = q = cutils.find_large_prime(prime_length)
-            while p == q:
-                p = cutils.find_large_prime(prime_length)
-            phi = (p -1) * (q - 1)
-            d = e = 3 # idk, I read online that this was acceptable
-            while ((d * e) % phi) != 1:
-                d += 1
-            return {'d': d, 'e': e, 'p': p, 'q': q}
-
+            # HMB, this is about to be some Grade A "excellent" code
+            e = 3
+            while True:
+                p = q = cutils.find_large_prime(prime_length)
+                while p == q:
+                    p = cutils.find_large_prime(prime_length)
+                phi = (p - 1) * (q - 1)
+                try:
+                    d = cutils.modinv(e, phi)
+                except:
+                    e += 1
+                    continue
+                return {'d': d, 'e': e, 'p': p, 'q': q}
+            
 
         elif algo == "dsa":
             q = cutils.find_large_prime(prime_length)
