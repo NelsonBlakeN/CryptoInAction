@@ -113,8 +113,8 @@ def isRoot(r, base):
 
     return True
 
-def isPrime(n, certainty=5):
-    # n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (reccommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)
+def isPrime(n, certainty=4):
+    # n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (recommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)
     if n <= 1:
         raise Exception("isPrime error: n must be positive and not 1")
 
@@ -125,7 +125,7 @@ def isPrime(n, certainty=5):
         m = (n-1)/(2**k)
     
     if k == 0:
-        g, _, _ = egcd(2, n)
+        #g, _, _ = egcd(2, n)
         #print("Common factor with {}: {}".format(2, g))
         return False
 
