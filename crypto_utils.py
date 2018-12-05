@@ -2,11 +2,23 @@ import random, math, time
 # euclidean method of finding gcd(a,b)
 # may need replacing for large numbers
 def egcd(a, b):
-    if a == 0:
-        return (b, 0, 1)
-    else:
-        g, y, x = egcd(b % a, a)
-        return (g, x - (b // a) * y, y)
+    x0 = xn = y1 = 1
+    y0 = yn = x1 = f = 0
+    rem = a % b
+    while rem > 0:
+        f = a // b
+        xn = x0 - f*x1
+        yn = y0 - f*y1
+
+        x0 = x1
+        y0 = y1
+        x1 = xn
+        y1 = yn
+        a = b
+        b = rem
+        rem = a % b
+    
+    return b, xn, yn
 
 def modinv(a, n):
     g, x, _ = egcd(a, n)
@@ -102,8 +114,9 @@ def isRoot(r, base):
     '''k = random.randint(2, base-2)
     return pow(r, random.randint(1, base-2)*(base-1), base) == 1 and dlog(pow(r, k, base), base, r) % (base - 1) == k'''
     
-    # 3. BEST APPROACH: O(f + p1) where f is the number of prime factors and p1 is the second largest prime
+    # 3. BEST APPROACH: O(f + p1) where f is the number of prime factors and p1 is the second largest prime factor of base-1
     factors = prime_factors(base-1)
+    #print(factors)
     for factor in factors:
         if pow(r, (base-1)/ factor, base) != 1:
             continue
@@ -114,7 +127,7 @@ def isRoot(r, base):
     return True
 
 def isPrime(n, certainty=4):
-    # n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (recommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)
+    '''n is the integer in question, certainty is a parameter to repeat the Miller-Rabin test (recommended 4 repetitions for 96.1% avoidance of strong psuedoprimes)'''
     if n <= 1:
         raise Exception("isPrime error: n must be positive and not 1")
 

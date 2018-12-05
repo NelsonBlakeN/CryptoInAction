@@ -57,5 +57,9 @@ class Encryption(object):
         t = pow(beta, k, p)*msg % p
         hex_r = hex(int(r))[2:]
         hex_t = hex(int(t))[2:]
+        if hex_r[-1] == "L":
+            hex_r = hex_r[:-1]
+        if hex_t[-1] == "L":
+            hex_t = hex_t[:-1]
 
         return (hex_r, hex_t)

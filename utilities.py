@@ -2,6 +2,7 @@ from crypto.decryption import Decryption
 from crypto.encryption import Encryption
 from crypto.signature import Signature
 import crypto_utils as cutils
+import random
 
 enc = Encryption()
 dec = Decryption()
@@ -36,7 +37,7 @@ class Utilities(object):
     def generate_keys(algo="el_gamal", prime_length = 31):
         if algo == "el_gamal":
             p = cutils.find_large_prime(prime_length)
-            alpha = cutils.randroot(p, 2, p-1)
+            alpha = cutils.randroot(p, 2, 100)
             a = random.randint(3, p-1) # private key
             beta = pow(alpha, a, p)
             return {'p': p, 'alpha': alpha, 'beta': beta, 'a': a}
@@ -45,9 +46,9 @@ class Utilities(object):
             # HMB, this is about to be some Grade A "excellent" code
             e = 3
             while True:
-                p = q = cutils.find_large_prime(prime_length)
+                p = q = cutils.find_large_prime(prime_length // 2 + 1)
                 while p == q:
-                    p = cutils.find_large_prime(prime_length)
+                    p = cutils.find_large_prime(prime_length // 2 + 1)
                 phi = (p - 1) * (q - 1)
                 try:
                     d = cutils.modinv(e, phi)
