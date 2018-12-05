@@ -29,9 +29,10 @@ def dlog(x, order, base=10):
         if y > order - 1:
             raise Exception("Discrete log error: discrete log of {} base {} does not exist with respect to {}".format(x,base,order))
         i += 1
-    
+
     return int(y)
 
+# Find primitive root
 def isRoot(r, base):
     # 1. Tabular method too slow O(base) when checking to base/2
     '''table = []
@@ -47,7 +48,7 @@ def isRoot(r, base):
     # 2. Log method even slower O(base*log(base))
     '''k = random.randint(2, base-2)
     return pow(r, random.randint(1, base-2)*(base-1), base) == 1 and dlog(pow(r, k, base), base, r) % (base - 1) == k'''
-    
+
     # 3. BEST APPROACH: O(f + p1) where f is the number of prime factors and p1 is the second largest prime
     factors = prime_factors(base-1)
     for factor in factors:
@@ -69,7 +70,7 @@ def isPrime(n, certainty=5):
     while m % 2 == 0:
         k += 1
         m = (n-1)/(2**k)
-    
+
     if k == 0:
         g, _, _ = egcd(2, n)
         #print("Common factor with {}: {}".format(2, g))
@@ -95,7 +96,7 @@ def isPrime(n, certainty=5):
             elif b[i] == n-1:
                 flags[f] = True
                 break
-        
+
         if b[k-1] != 0 and b[k-1] != 1:
             if b[k-1] != n-1:
                 #g, _, _ = egcd(b[k-1]-1, n)
@@ -103,7 +104,7 @@ def isPrime(n, certainty=5):
                 flags[f] = False
             else:
                 flags[f] = True
-    
+
     if False in flags:
         return False
     else:
