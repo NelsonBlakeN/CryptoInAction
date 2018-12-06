@@ -193,7 +193,7 @@ class Attack(object):
 
             return ""
         else:
-            raise Exception("Unknown attack: {}".format(appr))
+            return None
 
     def rsa_sig(self, cipher, pub_key={}, appr = "brute"):
         pass
