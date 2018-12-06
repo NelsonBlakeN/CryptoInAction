@@ -135,8 +135,6 @@ class Utilities(object):
 
                 round_key = left_side + right_side
 
-                print hex(int(round_key, 2))
-
                 round_keys.append(round_key)
             return {'k': round_keys}
 
