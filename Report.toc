@@ -1,0 +1,14 @@
+\contentsline {chapter}{\numberline {1}Final Report}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Introduction}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Background and Literature Review}{2}{section.1.2}
+\contentsline {section}{\numberline {1.3}Method and Approach}{3}{section.1.3}
+\contentsline {subsection}{\numberline {1.3.1}Attacking RSA}{3}{subsection.1.3.1}
+\contentsline {subsection}{\numberline {1.3.2}Attacking El Gamal}{5}{subsection.1.3.2}
+\contentsline {subsection}{\numberline {1.3.3}Attacking DSA}{5}{subsection.1.3.3}
+\contentsline {subsection}{\numberline {1.3.4}Attacking DES}{5}{subsection.1.3.4}
+\contentsline {subsection}{\numberline {1.3.5}Attacking One-Time Pad}{6}{subsection.1.3.5}
+\contentsline {section}{\numberline {1.4}Results}{6}{section.1.4}
+\contentsline {section}{\numberline {1.5}Discussion and Recommendations}{6}{section.1.5}
+\contentsline {section}{\numberline {1.6}Conclusion}{6}{section.1.6}
+\contentsline {section}{\numberline {1.7}Appendix A: Source Code}{11}{section.1.7}
+\contentsline {section}{\numberline {1.8}Appendix B: Presentation Slides}{12}{section.1.8}
