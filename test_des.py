@@ -3,22 +3,16 @@ from utilities import Utilities as utils
 
 message = "abcdefgh"
 # Translate message
-binary_msg = []
-for c in message:
-    char_as_byte = bin(ord(c))[2:]
-    while len(char_as_byte) < 8:    # Pad byte to 8 bits
-        char_as_byte = "0" + char_as_byte
-    binary_msg.append(char_as_byte)
+binary_msg2 = []
+binary_msg = bin(int(message.encode('hex'), 16))[2:]
+while len(binary_msg) % 8 != 0:
+    binary_msg = "0" + binary_msg
 
-binary_msg = ''.join(binary_msg)
-
-print "message:", binary_msg
+print "message: ", binary_msg
 
 ## Key gen
 key = utils.generate_keys(algo="des")['k']
 print "Key:", key, "\n"
-
-# Up to here works
 
 ## Encryption
 # Initial permutation
