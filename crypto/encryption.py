@@ -1,4 +1,5 @@
-import crypto_utils as utils
+import crypto_utils as cutils
+import random
 
 # Initial and permutation, represented as a matrix
 # Initial: post_perm[i] = msg[if_perm[i]]
@@ -24,8 +25,18 @@ class Encryption(object):
         p = key['p']
         q = key['q']
         n = p * q
+
         msg = message.encode('hex')
-        return math.pow(msg, e, n)
+        msg = int(msg, 16)
+
+        if msg > n:
+            raise Exception("WeakKeyError: message is larger than n potential loss of data")
+
+        msg = pow(msg, e, n)
+        msg = hex(int(msg))[2:]
+        if msg[-1] == "L":
+            msg = msg[:-1]
+        return msg
 
     # DES Encryption
     # message: the string message to encrypt
@@ -90,5 +101,9 @@ class Encryption(object):
         t = pow(beta, k, p)*msg % p
         hex_r = hex(int(r))[2:]
         hex_t = hex(int(t))[2:]
+        if hex_r[-1] == "L":
+            hex_r = hex_r[:-1]
+        if hex_t[-1] == "L":
+            hex_t = hex_t[:-1]
 
         return (hex_r, hex_t)

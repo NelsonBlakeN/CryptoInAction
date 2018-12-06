@@ -59,21 +59,26 @@ class Utilities(object):
     def generate_keys(algo="el_gamal", prime_length = 31):
         if algo == "el_gamal":
             p = cutils.find_large_prime(prime_length)
-            alpha = cutils.randroot(p, 2, p-1)
+            alpha = cutils.randroot(p, 2, 100)
             a = random.randint(3, p-1) # private key
             beta = pow(alpha, a, p)
             return {'p': p, 'alpha': alpha, 'beta': beta, 'a': a}
 
         elif algo == "rsa":
-            p = q = cutils.find_large_prime(prime_length)
-            while p == q:
-                p = cutils.find_large_prime(prime_length)
-            phi = (p -1) * (q - 1)
-            d = e = 3 # idk, I read online that this was acceptable
-            while ((d * e) % phi) != 1:
-                d += 1
-            return {'d': d, 'e': e, 'p': p, 'q': q}
-
+            # HMB, this is about to be some Grade A "excellent" code
+            e = 3
+            while True:
+                p = q = cutils.find_large_prime(prime_length // 2 + 1)
+                while p == q:
+                    p = cutils.find_large_prime(prime_length // 2 + 1)
+                phi = (p - 1) * (q - 1)
+                try:
+                    d = cutils.modinv(e, phi)
+                except:
+                    e += 1
+                    continue
+                return {'d': d, 'e': e, 'p': p, 'q': q}
+            
 
         elif algo == "dsa":
             q = cutils.find_large_prime(prime_length)
