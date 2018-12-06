@@ -23,7 +23,7 @@ class Decryption(object):
     # Decrypt AES-128-encrypted messages
     # cipher: the string message to decrypt
     # key: the key used to decrypt (could be multiple values)
-    def aes128(self, cipher, key={}):
+    def des(self, cipher, key={}):
         return ""
 
     # Decrpyt OTP-encrypted messages
@@ -44,5 +44,5 @@ class Decryption(object):
         m = pow(t*r_inv, 1, p)
 
         m = hex(int(m))[2:]
-        
+
         return m.decode('hex')

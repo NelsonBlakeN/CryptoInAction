@@ -98,6 +98,7 @@ def rem(a, x, b, y):
         return a + x*solution
 
 
+# Find primitive root
 def isRoot(r, base):
     # 1. Tabular method too slow O(base) when checking to base/2
     '''table = []
@@ -136,7 +137,7 @@ def isPrime(n, certainty=4):
     while m % 2 == 0:
         k += 1
         m = (n-1)/(2**k)
-    
+
     if k == 0:
         #g, _, _ = egcd(2, n)
         #print("Common factor with {}: {}".format(2, g))
@@ -162,7 +163,7 @@ def isPrime(n, certainty=4):
             elif b[i] == n-1:
                 flags[f] = True
                 break
-        
+
         if b[k-1] != 0 and b[k-1] != 1:
             if b[k-1] != n-1:
                 #g, _, _ = egcd(b[k-1]-1, n)
@@ -170,7 +171,7 @@ def isPrime(n, certainty=4):
                 flags[f] = False
             else:
                 flags[f] = True
-    
+
     if False in flags:
         return False
     else:
