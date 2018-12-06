@@ -44,11 +44,11 @@ class Encryption(object):
     def des(self, message, key={}):
         # Translate message
         binary_msg = bin(int(message.encode('hex'), 16))[2:]
-        while len(binary_msg) % 8 != 0:
+        while len(binary_msg) < 64:
             binary_msg = "0" + binary_msg
 
         # Obtain key
-        key = key['k']
+        keys = key['k']
 
         # Initial permutation
         post_iperm = ""
@@ -58,18 +58,21 @@ class Encryption(object):
         left_block = post_iperm[:32]
         right_block = post_iperm[32:]
 
-        post_mangler = utils.mangler(right_block, key)
+        for key in keys:
+            post_mangler = cutils.mangler(right_block, key)
 
-        print "Post mangler:", post_mangler
+            # XOR: Mangler out and left block
+            post_final_xor = cutils.xor(left_block, post_mangler)
 
-        # XOR: Mangler out and left block
-        post_final_xor = utils.xor(left_block, post_mangler)
+            left_block = right_block
+            right_block = post_final_xor
 
-        final_left_block = right_block
-        final_right_block = post_final_xor
+        temp = left_block
+        left_block = right_block
+        right_block = temp
 
         # Final permutation
-        pre_fperm = final_left_block + final_right_block
+        pre_fperm = left_block + right_block
         post_fperm = [0] * len(pre_fperm)
         for i in range(len(pre_fperm)):
             post_fperm[if_perm[i]] = pre_fperm[i]
