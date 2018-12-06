@@ -100,13 +100,10 @@ class Utilities(object):
             round_keys = []
 
             # Convert key to binary before permutations
-            binary_key = []
-            for c in key:
-                char_as_byte = bin(ord(c))[2:]
-                while len(char_as_byte) < 8:    # Pad byte to 8 bits
-                    char_as_byte = "0" + char_as_byte
-                binary_key.append(char_as_byte)
-            binary_key = ''.join(binary_key)
+            # Translate message
+            binary_key = bin(int(key.encode('hex'), 16))[2:]
+            while len(binary_key) % 8 != 0:
+                binary_key = "0" + binary_key
 
             perm_key = [0] * len(key_perms)
             for i in range(len(key_perms)):
@@ -115,30 +112,33 @@ class Utilities(object):
             c = perm_key[:28]
             d = perm_key[28:]
 
-            # Loop
-            # Round 1
-            # Circular shift
-            _ = c.pop(0)
-            c.append(_)
-            _ = d.pop(0)
-            d.append(_)
+            for i in range(16):
+                # Circular shift
+                c.append(c.pop(0))
+                d.append(d.pop(0))
+                if i not in [0, 1, 8, 15]:
+                    # Shift twice
+                    c.append(c.pop(0))
+                    d.append(d.pop(0))
 
-            pre_perm_key = c + d
+                pre_perm_key = c + d
 
-            ## Permutation with discard
-            left_side = [0] * 24
-            right_side = [0] * 24
-            # Left
-            for i in range(len(left_perm)):
-                left_side[i] = pre_perm_key[left_perm[i]]
-            # Right
-            for i in range(len(right_perm)):
-                right_side[i] = pre_perm_key[right_perm[i]]
+                ## Permutation with discard
+                left_side = ""
+                right_side = ""
+                # Left
+                for i in range(len(left_perm)):
+                    left_side += pre_perm_key[left_perm[i]]
+                # Right
+                for i in range(len(right_perm)):
+                    right_side += pre_perm_key[right_perm[i]]
 
-            round_key = ''.join(left_side + right_side)
+                round_key = left_side + right_side
 
-            round_keys.append(round_key)
-            return {'k': round_key}
+                print hex(int(round_key, 2))
+
+                round_keys.append(round_key)
+            return {'k': round_keys}
 
         else:
             return {}
