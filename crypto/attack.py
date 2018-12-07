@@ -5,13 +5,16 @@ import crypto_utils as cutils
 import utilities as utils
 import random, math, fractions, time
 
+# Index corresponds to digit size of corresponding binary encoded key
+# des_benchmark_keys = ['', '\a', '!', 'm', '!!', 'aa', '\aaa', 'abc']#, , '\a\a\a\a', '~~~~']
+
 class Attack(object):
     def __init__(self):
         self.enc = Encryption()
         self.dec = Decryption()
         pass
 
-    def benchmark(self, attack, algorithm='rsa', min=3, max=15):
+    def benchmark(self, attack, algorithm='rsa', min=3, max=15, key=""):
         if algorithm not in ['rsa', 'rsa_sig', 'el_gamal', 'dsa', 'des']:
             print("Invalid algorithm passed")
             return None
@@ -21,7 +24,10 @@ class Attack(object):
         for key_size in range(min, max+1):
             #print('[' + algorithm + ':' + attack + ']' + " (key_size " + str(key_size) + ')', end='')
             #print(' ', end='')
-            keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size)
+            # key = des_benchmark_keys[key_size]
+            new_key = key * key_size
+            print("Encrypting with key", new_key, "("+str(len(str(int(new_key.encode('hex'), 16))))+" digits)")
+            keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=new_key)
             ciphertext = ''
             if algorithm == 'rsa':
                 ciphertext = utils.enc.rsa(message, keys)
@@ -51,6 +57,42 @@ class Attack(object):
                 else:
                     print("wrong plaintext recovered: {}".format(output))
 
+            elif algorithm == 'des':
+                ciphertext = utils.enc.des(message, keys)
+
+                start = stop = time.time()
+                # Run brute force...
+                output = self.des_attack(cipher=[message, ciphertext])
+                stop = time.time()
+                if output == 'h':
+                    print(str(stop - start))
+                else:
+                    print("Failed to recover plaintext: {}".format(output))
+
+    def des_attack(self, cipher, pub_key={}, appr = "brute"):
+        # Use generate_keys with a random key
+        # Call result = self.enc.des(message, key set)
+        # If result != cipher, increment key and repeat
+        known_plaintxt = cipher[0]
+        known_cipher = cipher[1]
+        result = ""
+        k = 1
+        if appr == 'brute':
+            while result != known_cipher:
+                key = str(k)
+                keys = utils.Utilities.generate_keys(algo='des', key=key)
+                result = self.enc.des(known_plaintxt, keys)
+                k += 1
+
+        if result == "":
+            raise Exception("DES brute force failed")
+
+        if result == known_cipher:
+            return known_plaintxt
+
+        return ''
+
+
     def el_gamal_dec(self, cipher, pub_key={}, appr = "shanks"):
         p = pub_key['p']
         alpha = pub_key['alpha']
@@ -79,7 +121,7 @@ class Attack(object):
             N = int(math.ceil(p**0.5))
             if N**2 < p-1:
                 raise Exception("Shanks attack error: bad choice of N")
-            
+
             j_list = []
             k_list = []
             i = 0
@@ -155,7 +197,7 @@ class Attack(object):
             return self.dec.el_gamal(cipher=cipher, key={'p': p, 'beta': beta, 'alpha': alpha, 'a': a[0]})
         else:
             raise Exception("Unknown attack: {}".format(appr))
-    
+
     def dsa(self, cipher, pub_key={}, appr = "brute"):
         pass
 
@@ -198,5 +240,3 @@ class Attack(object):
     def rsa_sig(self, cipher, pub_key={}, appr = "brute"):
         pass
 
-    def des(self, cipher, pub_key=None, appr = "brute"):
-        pass
