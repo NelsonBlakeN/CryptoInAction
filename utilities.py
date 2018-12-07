@@ -56,7 +56,10 @@ class Utilities(object):
         pass
 
     @staticmethod
-    def generate_keys(algo="el_gamal", prime_length = 31):
+    # algo: algorithm to generate a key for. Different algorithms require different key sets
+    # prime_length: length of prime required
+    # key: given key seed (for DES)
+    def generate_keys(algo="el_gamal", prime_length = 31, key = ""):
         if algo == "el_gamal":
             p = cutils.find_large_prime(prime_length)
             alpha = cutils.randroot(p, 2, 100)
@@ -78,7 +81,7 @@ class Utilities(object):
                     e += 1
                     continue
                 return {'d': d, 'e': e, 'p': p, 'q': q}
-            
+
 
         elif algo == "dsa":
             q = cutils.find_large_prime(prime_length)
@@ -101,13 +104,12 @@ class Utilities(object):
             return {'p': p, 'q': q, 'alpha': alpha, 'beta': beta, 'a': a}
 
         elif algo == "des":
-            key = "abcdefgh"    # 8 byte key
             round_keys = []
 
             # Convert key to binary before permutations
             # Translate message
             binary_key = bin(int(key.encode('hex'), 16))[2:]
-            while len(binary_key) % 8 != 0:
+            while len(binary_key) % 64 != 0:
                 binary_key = "0" + binary_key
 
             perm_key = [0] * len(key_perms)
