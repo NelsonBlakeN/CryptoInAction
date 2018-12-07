@@ -139,7 +139,7 @@ Pollard's $p-1$ method takes a much more intelligent approach. Instead of trying
 $b \equiv 2^{B!}$ (mod $p$) $\equiv 2^{k(p-1)}$ (mod $p$) $\equiv$ 1 (mod $p$)
 and it is easy to get a prime factor from $p-1$ by adding 1. The bottleneck of the Pollard method is how quickly you can calculate $2^{B!}$ (mod $p$) since the factorial makes the amount of computation grow at beyond exponential rates!
 
-For a comparison of the two attacks on RSA, section \ref{results}.
+For a comparison of the two attacks on RSA, see section \ref{results}.
 
 \subsection{Attacking El Gamal}
 Just as RSA relies on the computational infeasibility of factoring products of large primes, El Gamal relies on what is known as the Discrete Logarithm Problem. The premise of this problem is that given the congruence $a^{x} \equiv b$ (mod $n$) and that $n$ is prime, for some known $a^{x}$, $b$, and $n$ there is no efficient way to find $x$. However, there are still some methods of recovering a plaintext from an El Gamal ciphertext of various effectiveness. For this project, we experiment with brute-force, the Pollig-Hellman method, and the Shank's method. 
@@ -160,26 +160,73 @@ The One-Time Pad is the only cryptosystem tested in this project that is perfect
 \section{Results}
 \label{results}
 
+All of the graphs showing the results of the project testing can be found in Figures \ref{fig:allattack}--\ref{fig:des}
+
 \begin{figure}[hp!] % [hp!] means ''here''
     \begin{center}
-        \includegraphics[width=0.5\linewidth]{walker.jpg}
-        \caption{Comparison of Brute-Force and $p-1$ Attacks on RSA}
-        \label{fig:rsa}
+        \includegraphics[width=0.85\linewidth]{AllAttack.PNG}
+        \caption{Comparison of All Attacks Tested}
+        \label{fig:allattack}
     \end{center}
 \end{figure}
 
 \begin{figure}[hp!] % [hp!] means ''here''
     \begin{center}
-        \includegraphics[width=0.5\linewidth]{walker.jpg}
-        \caption{Comparison of Attacks on El Gamal}
-        \label{fig:el-gamal}
+        \includegraphics[width=0.85\linewidth]{RSABrute.PNG}
+        \caption{Brute Force Attack on RSA}
+        \label{fig:rsa1}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{RSAp-1.PNG}
+        \caption{$p-1$ Attack on RSA}
+        \label{fig:rsa2}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{ElGamalBrute.PNG}
+        \caption{Brute Force Attack on El Gamal}
+        \label{fig:el-gamal1}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{ElGamalShanks.PNG}
+        \caption{Shank's ``Baby-Step Giant-Step'' Attack on RSA}
+        \label{fig:el-gamal2}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{ElGamalPohlig.PNG}
+        \caption{Pohlig-Hellman Attack on El-Gamal}
+        \label{fig:el-gamal3}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{DES.png}
+        \caption{Brute Force Attack on DES}
+        \label{fig:des}
     \end{center}
 \end{figure}
 
 \section{Discussion and Recommendations}
+As shown in the Results section of this report, the brute force attacks were significantly slower than the more informed attacks on the cryptosystems. However, despite the relative ineffectiveness of the brute force attacks, they were still relatively effective against RSA. Figure \ref{fig:allattack} best shows this data. Here, we see that El Gamal is much more resistant to brute force attacks than RSA is. Additionally, the $p-1$ factorization attack is by far more successful than the Shanks' and Pohlig-Hellman attacks on El Gamal. This seems to point to the idea that El Gamal is overall more resistant to attack than RSA is, so this research team recommends the use of El Gamal over RSA for more sensitive information sent over insecure channels.
+
+For the testing of DES, there was the question of how to simulate the testing of various key sizes for the algorithm, since the standard requires 64-bit keys. However, to simulate smaller keys for our attacks, we created algorithms to generate keys of varying strengths. Keys with many leading zeroes are considered weaker keys and more random-valued keys are considered stronger keys.
 
 \section{Conclusion}
-deez nuts
+Brute force attacks are significantly slower than more informed attacks, such as Pollard's $p-1$ attack on RSA and Shanks' ``Baby-Step Giant-Step'' attack on El Gamal. Additionally, all attacks on every cryptosystem becomes significantly more difficult when the size of the encryption key increases. In most cases, the increase in computational complexity increases at an exponential rate. Overall, the One-Time Pad was the most secure cryptosystem under test, followed by El Gamal, RSA, and DES.
+
+In terms of the efficiency of sending messages, secret key (symmetric key) encryption was faster than public key (asymmetric key) encryption. This is likely due to the fact that the iterative exponentiation and modulus division takes much more time than simple XORs and reordering of bit sequences. This explains why most internet connections are initiated with public key communications to perform the key exchange, and then use symmetric key encryption from then on out.
 
 % an example bibliography
 \newpage
@@ -204,7 +251,7 @@ deez nuts
     
     \bibitem{stanford}
     The Diffie Hellman Problem.\\
-    \texttt{https://crypto.stanford.edu/~dabo/pubs/papers/DDH.pdf}
+    \texttt{https://crypto.stanford.edu/\~{}dabo/pubs/papers/DDH.pdf}
     
     \bibitem{mit}
     A Method for Obtaining Digital Signatures and Public Key Cryptosystems.\\
@@ -212,7 +259,7 @@ deez nuts
 
     \bibitem{pollard}
     Notes on Pollard's $p-1$ Attack on RSA\\
-    \texttt{https://www.math.columbia.edu/~goldfeld/PollardAttack.pdf}
+    \texttt{https://www.math.columbia.edu/\~{}goldfeld/PollardAttack.pdf}
 
     \bibitem{dsa}
     Digital Signature Standard (DSS)\\
