@@ -87,8 +87,6 @@ class Attack(object):
             while i <= N:
                 j_list.append(pow(alpha, i, p))
                 k_list.append(pow(beta*pow(alpha_inv, N*i, p), 1, p))
-                '''if len(match) != 0:
-                    break'''
                 i += 1
 
             #print(j_list)
