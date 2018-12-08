@@ -179,14 +179,14 @@ The number of primes less than a given number $x$ can be approximated as $\frac{
 digits in base 10. This means that there are a \textbf{huge} number of potential prime numbers that could be factors of $x$ and it would take a \textbf{very} long
 time to try them all, even for a powerful computer.
 
-For this project, two methods of factoring $n$ are explored: brute-force guessing and Pollard's $p-1$ method.\cite{pollard} Our brute force implementation takes the
-ultimate naive approach and simply tries every single odd number less than $n$ until it finds the smaller of the factors. Once it finds one of the factors of $n$,
-it is trivial to find the other factor and $\phi(n)$ is easily calculated. By taking an inverse mod of $\phi(n)$ using the known encryption exponent, $e$, any
-ciphertext created with $d$ can now be decrypted.
+For this project, two methods of factoring $n$ were explored: brute-force guessing and Pollard's $p-1$ method.\cite{pollard} Our brute force implementation took the
+ultimate naive approach and simply tries every single odd number less than $n$ until it found the smaller of the factors. Once it found one of the factors of $n$,
+it was trivial to find the other factor and $\phi(n)$ was easily calculated. By taking an inverse mod of $\phi(n)$ using the known encryption exponent, $e$, any
+ciphertext created with $d$ could then be decrypted.
 
-Pollard's $p-1$ method takes a much more intelligent approach. Instead of trying to guess the small prime in the composite $n$, we start with $a=2$ and set a bound
-$B$ to be around 100 or so. Then we calculate $b=2^{B!}$ (mod $n$). If $gcd(b-1,n)$ is not 1 or $n$, then we have found a non-trivial factor of $n$. If we do not
-get a non-trivial factor of $n$, we simply increase the size of our bound $B$ and try again. For larger key sizes, a larger $B$ must be used. Varying $a$ is also a
+Pollard's $p-1$ method takes a much more intelligent approach. Instead of trying to guess the small prime in the composite $n$, we started with $a=2$ and set a bound
+$B$ to be around 100 or so. Then we calculated $b=2^{B!}$ (mod $n$). If $gcd(b-1,n)$ was not 1 or $n$, then we have found a non-trivial factor of $n$. If we did not
+get a non-trivial factor of $n$, we simply increased the size of our bound $B$ and tried again. For larger key sizes, a larger $B$ must be used. Varying $a$ is also a
 valid approach to factorize $n$. The method works because of Fermat's Little Theorem, a very important theorem in number theory. Since $(p-1)|B!$, this implies that
 $B!$ is an integer multiple of $(p-1)$. From this, we see that $b \equiv 2^{B!}$ (mod $p$) $\equiv 2^{k(p-1)}$ (mod $p$) $\equiv$ 1 (mod $p$) and it is easy to get
 a prime factor from $p-1$ by adding 1. The bottleneck of the Pollard method is how quickly you can calculate $2^{B!}$ (mod $p$) since the factorial makes the amount
