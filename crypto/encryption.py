@@ -80,9 +80,20 @@ class Encryption(object):
         return ''.join(post_fperm)
 
     # One Time Pad Encryption
-    # message: the string message to encrypt
+    # message: the string message to encrypt, as binary
     # key: the key used to encrypt (could be multiple values)
     def one_time_pad(self, message, key={}):
+<<<<<<< HEAD
+        # Assume the message is already binary string
+        # binary_msg = bin(int(message.encode('hex'), 16))[2:]
+        binary_key = key['key']
+
+        # XOR
+        cipher = cutils.xor(message, binary_key)
+
+        # Return cipher
+        return cipher
+=======
         # Get message as binary
         binary_msg = bin(int(message.encode('hex'), 16))[2:]
 
@@ -97,6 +108,7 @@ class Encryption(object):
 
         # Return cipher and key
         return cipher, binary_key
+>>>>>>> master
 
     # El Gamal Encryption
     # message: the string message to encrypt
