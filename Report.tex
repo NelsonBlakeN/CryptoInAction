@@ -32,88 +32,17 @@
 \newpage
 
 \begin{abstract}
-    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers being captured and their messages
-    intercepted, a method of ensuring that only the authorized parties were able to read messages has been necessary. Such is the beginning of cryptography and the battle to devise new ways to
-    break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in current popular cryptographic systems such as RSA, El Gamal, and DES. To do this, a client and a
-    server are connected over the TCP/IP stack and exchange information. The client will send an encrypted message to the server, and the server will decrypt this and respond back with its own
-    encrypted message. The client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the
-    cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we analyze and discuss the performance
-    of each of these attack vectors on a number of cryptosystems. Unsurprisingly, the brute force attacks on encryption are not nearly as effective as more sophisticated attacks that extort some
-    of the weaker mathematical properties of the cryptosystems. These results are summarized in graphs and explained in depth in this report.
+    Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers
+    being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages has been necessary. Such is the
+    beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in
+    current popular cryptographic systems such as RSA, El Gamal, and DES. To do this, a client and a server are connected over the TCP/IP stack and exchange
+    information. The client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The
+    client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the
+    cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we
+    analyze and discuss the performance of each of these attack vectors on a number of cryptosystems. Unsurprisingly, the brute force attacks on encryption are not
+    nearly as effective as more sophisticated attacks that extort some of the weaker mathematical properties of the cryptosystems. These results are summarized in
+    graphs and explained in depth in this report.
 \end{abstract}
-
-% for the progress report only
-\iffalse
-    \section{Task Assignments}
-    \subsection{Write Symmetric Key Encryption}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        DES & Blake & incomplete \\
-        One Time Pad & Blake & incomplete
-    \end{tabular}
-
-    \subsection{Write Public Key Encryption}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        RSA & Dominick & complete \\
-        El Gamal & Nathan & complete
-    \end{tabular}
-
-    \subsection{Write Signature Protocols}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        RSA & Dominick & complete \\
-        El Gamal & Nathan & complete \\
-        DSA & Nathan & incomplete
-    \end{tabular}
-
-    \subsection{Write Decryption Attacks}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        RSA (Brute Force) & Dominick & complete \\
-        RSA ($p-1$ factoring) & Dominick & complete \\
-        El Gamal (Brute Force) & Nathan & incomplete \\
-        El Gamal (Pollig-Hellman) & Nathan & incomplete \\
-        El Gamal (Shank's) & Nathan & incomplete \\
-        DES (Brute Force) & Blake & incomplete \\
-        OTP (Brute Force) & Blake & incomplete
-    \end{tabular}
-
-    \subsection{Implement Man-in-the-Middle Attacks}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        Packet Sniffing & Blake & incomplete
-    \end{tabular}
-
-    \subsection{Analyze Tasks}
-    \begin{tabular}{l|l|l}
-        Name & Assignee & Status \\ \hline
-        Compare Private vs. Public Encryption & Blake & incomplete \\
-        Compare Decryption Attack Methods & Nathan and Dom & incomplete
-    \end{tabular}
-\fi
-
-% for the progress report only
-\iffalse
-    \section{Timeline}
-    \begin{tabular}{l|l|l|l}
-        Task & Assignee & Completion Date & Work Effort\\ \hline
-        Develop Client/Server Framework & Blake & November 1 & 1 week\\
-        Successfully Send Plaintext Message & Blake & November 15 & 2 days\\
-        Complete RSA Encryption/Decryption & Dominick & November 25 & 1 day\\
-        Complete El Gamal Encryption/Decryption & Nathan & November 25 & 1 day\\
-        Complete DES Encryption/Decryption & Nathan & November 28 & 1 day\\
-        Complete RSA Signature & Dominick & November 28 & 1 day\\
-        Complete El Gamal Signature & Nathan & November 28 & 1 day\\
-        Execute RSA Decryption Attack & Dominick & December 1 & 3 days\\
-        Execute El Gamal Decryption Attack & Nathan & December 1 & 3 days\\
-        Execute DES Decryption Attack & Blake & December 1 & 3 days\\
-        Execute MITM Attacks & All Members & December 3 & 2 days\\
-        Write Up Attack Successes/Failures & All Members & December 3 & 1 day\\
-        Project Presentation & All Members & December 4/6\\
-        Write Final Report & All Members & December 8 & 2 days
-    \end{tabular}
-\fi
 
 
 \chapter{Final Report}
@@ -220,7 +149,7 @@ relies on $n-1$ having small prime factors to be efficient.
 The Digital Signature Algorithm relies on the same premise of El Gamal where solving the Discrete Log Problem is hard. However, the keys of El Gamal and DSA are
 very different because for $a^{x} \equiv b$ (mod $n$) El Gamal requires a to be a primitive root of n but DSA requires a not to be a primitive root but
 $a \equiv g^{(n-1)/q}$ (mod $n$) where q is the largest prime factor of $n-1$. This requirement ensures that attacks on El Gamal cannot be used on DSA and the
-signature algorithm of DSA produces signatures with no collisions. Attacks on DSA are widely undevloped due to a lack of mathematical discovery around the Discrete
+signature algorithm of DSA produces signatures with no collisions. Attacks on DSA are widely undeveloped due to a lack of mathematical discovery around the Discrete
 Log Problem. One of the best current rigorous approaches utilizes Lagrange Lattice Reduction to produce a solution in polynomial time \cite{lattice}. However, a
 more efficient approach is a birthday attack where one computes random permutations of private key $x$ and random integer $k$, used in the signature algorithm of
 DSA, to increase the probability of generating an intercepted signature. This approach, however, is probabilistic but does run in $O(\sqrt{n})$ time.
