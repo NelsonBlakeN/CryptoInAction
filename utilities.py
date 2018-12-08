@@ -58,11 +58,7 @@ class Utilities(object):
     @staticmethod
     # algo: algorithm to generate a key for. Different algorithms require different key sets
     # prime_length: length of prime required
-<<<<<<< HEAD
     # key: given key seed (for DES/OTP)
-=======
-    # key: given key seed (for DES)
->>>>>>> master
     def generate_keys(algo="el_gamal", prime_length = 31, key = ""):
         if algo == "el_gamal":
             p = cutils.find_large_prime(prime_length)
@@ -149,7 +145,6 @@ class Utilities(object):
                 round_keys.append(round_key)
             return {'k': round_keys}
 
-<<<<<<< HEAD
         elif algo == 'otp':
             # Generate key of same length
             binary_key = ""
@@ -158,7 +153,5 @@ class Utilities(object):
                 binary_key += str(bit)
             return {'key': binary_key}
 
-=======
->>>>>>> master
         else:
             return {}
