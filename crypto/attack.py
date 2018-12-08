@@ -15,7 +15,7 @@ class Attack(object):
         pass
 
     def benchmark(self, attack, algorithm='rsa', min=3, max=15, key=""):
-        if algorithm not in ['rsa', 'rsa_sig', 'el_gamal', 'dsa', 'des']:
+        if algorithm not in ['rsa', 'rsa_sig', 'el_gamal', 'dsa', 'des', 'otp']:
             print("Invalid algorithm passed")
             return None
 
@@ -25,9 +25,7 @@ class Attack(object):
             #print('[' + algorithm + ':' + attack + ']' + " (key_size " + str(key_size) + ')', end='')
             #print(' ', end='')
             # key = des_benchmark_keys[key_size]
-            new_key = key * key_size
-            print("Encrypting with key", new_key, "("+str(len(str(int(new_key.encode('hex'), 16))))+" digits)")
-            keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=new_key)
+            keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=key)
             ciphertext = ''
             if algorithm == 'rsa':
                 ciphertext = utils.enc.rsa(message, keys)
@@ -69,7 +67,53 @@ class Attack(object):
                 else:
                     print("Failed to recover plaintext: {}".format(output))
 
-    def des_attack(self, cipher, pub_key={}, appr = "brute"):
+            elif algorithm == 'otp':
+                # Because the OTP key needs to be the size of the message,
+                # recalculate keys using the message
+                new_msg = message * key_size    # Since the key is dependent on the message, increase the message size each time
+                # Encode message
+                binary_msg = bin(int(new_msg.encode('hex'), 16))[2:]
+
+                keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=binary_msg)
+
+                # Encrypt
+                ciphertext = utils.enc.one_time_pad(binary_msg, keys)
+
+                start = stop = time.time()
+                # Run brute force...
+                print("Running attack with key {} ({})".format(keys['key'], len(str(int(keys['key'], 2)))))
+                output = self.otp_attack([new_msg, ciphertext])
+                stop = time.time()
+                if output == new_msg:
+                    print(str(stop - start))
+                else:
+                    print("Failed to recover plaintext: {}".format(output))
+
+    def otp_attack(self, cipher, appr="brute"):
+        # Generate random key
+        known_plaintxt = cipher[0]
+        known_cipher = cipher[1]
+        result = ""
+        k = 1
+        if appr == 'brute':
+            while result != known_cipher:
+                # Encode message
+                binary_msg = bin(int(known_plaintxt.encode('hex'), 16))[2:]
+                key = bin(k)[2:]
+                while len(key) < len(binary_msg):
+                    key = "0" + key
+                key = utils.Utilities.generate_keys(algo='otp', key=key)
+
+                result = self.enc.one_time_pad(binary_msg, key)
+
+        if result == "":
+            raise Exception("OTP brute force failed")
+
+        if result == known_cipher:
+            return known_plaintxt
+        return ''
+
+    def des_attack(self, cipher, appr = "brute"):
         # Use generate_keys with a random key
         # Call result = self.enc.des(message, key set)
         # If result != cipher, increment key and repeat
@@ -79,6 +123,7 @@ class Attack(object):
         k = 1
         if appr == 'brute':
             while result != known_cipher:
+                # key = bin(k)[2:]
                 key = str(k)
                 keys = utils.Utilities.generate_keys(algo='des', key=key)
                 result = self.enc.des(known_plaintxt, keys)
