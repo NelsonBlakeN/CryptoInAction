@@ -15,7 +15,11 @@ class Attack(object):
         pass
 
     def benchmark(self, attack, algorithm='rsa', min=3, max=15, key=""):
+<<<<<<< HEAD
         if algorithm not in ['rsa', 'rsa_sig', 'el_gamal', 'dsa', 'des', 'otp']:
+=======
+        if algorithm not in ['rsa', 'rsa_sig', 'el_gamal', 'dsa', 'des']:
+>>>>>>> master
             print("Invalid algorithm passed")
             return None
 
@@ -25,7 +29,13 @@ class Attack(object):
             #print('[' + algorithm + ':' + attack + ']' + " (key_size " + str(key_size) + ')', end='')
             #print(' ', end='')
             # key = des_benchmark_keys[key_size]
+<<<<<<< HEAD
             keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=key)
+=======
+            new_key = key * key_size
+            print("Encrypting with key", new_key, "("+str(len(str(int(new_key.encode('hex'), 16))))+" digits)")
+            keys = utils.Utilities.generate_keys(algo=algorithm, prime_length=key_size, key=new_key)
+>>>>>>> master
             ciphertext = ''
             if algorithm == 'rsa':
                 ciphertext = utils.enc.rsa(message, keys)
@@ -67,6 +77,7 @@ class Attack(object):
                 else:
                     print("Failed to recover plaintext: {}".format(output))
 
+<<<<<<< HEAD
             elif algorithm == 'otp':
                 # Because the OTP key needs to be the size of the message,
                 # recalculate keys using the message
@@ -114,6 +125,9 @@ class Attack(object):
         return ''
 
     def des_attack(self, cipher, appr = "brute"):
+=======
+    def des_attack(self, cipher, pub_key={}, appr = "brute"):
+>>>>>>> master
         # Use generate_keys with a random key
         # Call result = self.enc.des(message, key set)
         # If result != cipher, increment key and repeat
@@ -123,7 +137,10 @@ class Attack(object):
         k = 1
         if appr == 'brute':
             while result != known_cipher:
+<<<<<<< HEAD
                 # key = bin(k)[2:]
+=======
+>>>>>>> master
                 key = str(k)
                 keys = utils.Utilities.generate_keys(algo='des', key=key)
                 result = self.enc.des(known_plaintxt, keys)
@@ -174,8 +191,6 @@ class Attack(object):
             while i <= N:
                 j_list.append(pow(alpha, i, p))
                 k_list.append(pow(beta*pow(alpha_inv, N*i, p), 1, p))
-                '''if len(match) != 0:
-                    break'''
                 i += 1
 
             #print(j_list)
@@ -280,7 +295,7 @@ class Attack(object):
 
             return ""
         else:
-            raise Exception("Unknown attack: {}".format(appr))
+            return None
 
     def rsa_sig(self, cipher, pub_key={}, appr = "brute"):
         pass

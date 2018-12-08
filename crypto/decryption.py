@@ -30,8 +30,14 @@ class Decryption(object):
     # cipher: the string message to decrypt, as binary
     # key: the key used to decrypt, as binary
     def one_time_pad(self, cipher, key={}):
+<<<<<<< HEAD
         # XOR with key
         key = key['key']
+=======
+        # Cipher: assumed to be binary string
+        # Key is binary
+        # XOR with key
+>>>>>>> master
         plaintxt = cutils.xor(cipher, key)
         return plaintxt
 
