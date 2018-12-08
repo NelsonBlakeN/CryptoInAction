@@ -160,7 +160,8 @@ The source code for the project is organized into Python classes for Encryption,
 type of algorithm to use and the string of characters to perform the action on. To complete a simulated transaction, the client will use the Encryption module to
 encrypt and send a message to the server. The server will use the Decryption module to read the message and the Encryption module to formulate and send a response.
 Then the client uses the Decryption module to read the response. All the while, the attacker is using the Attack module to try to read the two ciphertexts after
-capturing the TCP packets. This is the basic format of the attacks and benchmarks are taken to see how long each encryption, decryption, and attack takes.
+capturing the TCP packets. This is the basic format of the attacks and benchmarks are taken to see how long each encryption, decryption, and attack takes. The source
+code for our approach can be found in Appendix A.
 
 \subsection{Attacking RSA}
 The strength of RSA comes from the idea that it is difficult to factor a large product of two primes. Since this has been deemed computationally infeasible, the
@@ -230,15 +231,21 @@ information, its popularity in past years makes it worthwhile to attack and benc
 in each round of the DES encryption. The algorithm was designed to be easy to implement in hardware and difficult to implement in software, so this proved a bit of
 a challenge to design in our Python scripts and is going to be significantly slower running in software than it would be using actual DES hardware.
 
-For this project, we experiment with a brute force attack on DES. To do this, we first need a known plaintext/ciphertext pair. Once we have this, we continually
+For this project, we experiment with a brute force attack on DES. To do this, we first need a known plaintext/ciphertext pair. Once we have this, we
 generate a random set of keys, encrypt the plaintext, and check to see if the result is the ciphertext. If we get the ciphertext from the pair as a result, then we
-have found the key needed to generate the DES key sets.
+have found the key needed to generate the DES key sets. If the result does not match the known cipher text, the key is linearly incremented, a new set of keys is
+generated, and the known plaintext is encrypted again. This approach was continuously repeated until the resulting cipher was equivalent to the known cipher. This
+brute force approach was repeated for keys of different digit sizes, similar to the other approaches in this project. The results can be seen in section \ref{results}.
 
 \subsection{Attacking One-Time Pad}
 The One-Time Pad is the only cryptosystem tested in this project that is perfectly secure. The reasoning behind this claim is that it is impossible to do any better
 than a brute force attack on the algorithm. This is because the key-space is the same size as the message-space. Each bit of the message is XOR'ed with a bit of the
 key, so there is no real math involved that could be exploited. The only way to recover the plaintext from the ciphertext is to know the key. The only way to know
-the key is to guess every single key of the same length as the message until you get it (assuming that the key is only used the one time).
+the key is to guess every single key of the same length as the message until you get it (assuming that the key is only used the one time). The approach to this
+algorithm is the same as the DES approach above. A known plain text and cipher text is obtained, encrypted with a key of a certain digit length. The attacker then
+obtains this pair, and linearly searches for a key that encrypts the known plain text correctly. Because the encryption key is random and dependent on the length of
+the message, several benchmark runs had to be conducted to obtain comprehensive results for a reasonable range of key lengths. These results were merged together, and
+can be seen in section \ref{results}.
 
 \section{Results}
 \label{results}
