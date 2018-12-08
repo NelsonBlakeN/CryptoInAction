@@ -12,3 +12,4 @@
 *.blg
 *.fdb_latexmk
 test.py
+reference.py
