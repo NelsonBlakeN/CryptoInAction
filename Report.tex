@@ -9,7 +9,7 @@
 \usepackage{indentfirst}
 \usepackage{titling} % for multiple title pages
 
-\linespread{1.8}
+\linespread{1.5}
 %\doublespacing
 
 \pretitle{\begin{center}\huge}
@@ -133,21 +133,26 @@ As RSA is a public key cryptosystem, each user in the system has both a public a
 
 The number of primes less than a given number $x$ can be approximated as $\frac{x}{ln(x)}$. If a 2048-bit RSA key were to be used, this number would have about 617 digits in base 10. This means that there are a \textbf{huge} number of potential prime numbers that could be factors of $x$ and it would take a \textbf{very} long time to try them all, even for a powerful computer.
 
-For this project, two methods of factoring $n$ are explored: brute-force guessing and Pollard's $p-1$ method.\cite{pollard} Our brute force implementation takes the ultimate naive approach and simply tries every single odd number less than $n$ until it finds one of the factors. Once it finds one of the factors of $n$, it is trivial to find the other factor and $\phi(n)$ is easily calculated. By taking an inverse mod of $\phi(n)$ using the known encryption exponent, $e$, any ciphertext created with $d$ can now be decrypted.
+For this project, two methods of factoring $n$ are explored: brute-force guessing and Pollard's $p-1$ method.\cite{pollard} Our brute force implementation takes the ultimate naive approach and simply tries every single odd number less than $n$ until it finds the smaller of the factors. Once it finds one of the factors of $n$, it is trivial to find the other factor and $\phi(n)$ is easily calculated. By taking an inverse mod of $\phi(n)$ using the known encryption exponent, $e$, any ciphertext created with $d$ can now be decrypted.
 
-Pollard's $p-1$ method takes a much more intelligent approach. Instead of trying to guess the correct answer, we start with $a=2$ and set a bound $B$ to be around 100 or so. Then we calculate $b=2^{B!}$ (mod $n$). If $gcd(b-1,n)$ is not 1 or $n$, then we have a non-trivial factor of $n$. If we do not get a non-trivial factor of $n$, we simply increase the size of our bound $B$ and try again. For larger key sizes, a larger $B$ must be used. Varying $a$ is also a valid approach to factorize $n$. The method works because of Fermat's Little Theorem, a very important theorem in number theory. Since $(p-1)|B!$, this implies that $B!$ is an integer multiple of $(p-1)$. From this, we see that
+Pollard's $p-1$ method takes a much more intelligent approach. Instead of trying to guess the small prime in the composite $n$, we start with $a=2$ and set a bound $B$ to be around 100 or so. Then we calculate $b=2^{B!}$ (mod $n$). If $gcd(b-1,n)$ is not 1 or $n$, then we have found a non-trivial factor of $n$. If we do not get a non-trivial factor of $n$, we simply increase the size of our bound $B$ and try again. For larger key sizes, a larger $B$ must be used. %since B is based on the larges prime factor of p-1
+Varying $a$ is also a valid approach to factorize $n$. The method works because of Fermat's Little Theorem, a very important theorem in number theory. Since $(p-1)|B!$, this implies that $B!$ is an integer multiple of $(p-1)$. From this, we see that
 $b \equiv 2^{B!}$ (mod $p$) $\equiv 2^{k(p-1)}$ (mod $p$) $\equiv$ 1 (mod $p$)
 and it is easy to get a prime factor from $p-1$ by adding 1. The bottleneck of the Pollard method is how quickly you can calculate $2^{B!}$ (mod $p$) since the factorial makes the amount of computation grow at beyond exponential rates!
 
 For a comparison of the two attacks on RSA, see section \ref{results}.
 
 \subsection{Attacking El Gamal}
-Just as RSA relies on the computational infeasibility of factoring products of large primes, El Gamal relies on what is known as the Discrete Logarithm Problem. The premise of this problem is that given the congruence $a^{x} \equiv b$ (mod $n$) and that $n$ is prime, for some known $a^{x}$, $b$, and $n$ there is no efficient way to find $x$. However, there are still some methods of recovering a plaintext from an El Gamal ciphertext of various effectiveness. For this project, we experiment with brute-force, the Pollig-Hellman method, and the Shank's method. 
+Just as RSA relies on the computational infeasibility of factoring products of large primes, El Gamal relies on what is known as the Discrete Logarithm Problem. The premise of this problem is that given the congruence $a^{x} \equiv b$ (mod $n$) and that $n$ is prime, for some known $a^{x}$, $b$, and $n$ there is no efficient way to find $x$. Also, a must be a primitive root of n which ensures no message collisions \cite{root}. However, there are still some methods of recovering a plaintext from an El Gamal ciphertext of various effectiveness. For this project, we experiment with brute-force, the Pohlig-Hellman method, and the Shank's method.
 
-%shanks rainbow, pollig breaks the one big time of shanks into a bunch of smaller ones
+The brute force attack on El Gamal is even more naive then the brute force of RSA since the private key $x$ can be any number from $2$ to $p-2$ inclusively. Therefore, the larger prime $n$ is in the public key the more possibilities for $x$ and the more computational time the brute force attack takes.
+
+The Shank's and Pohlig-Hellman attacks on El Gamal both utilize a rainbow table type of attack. This style of attack focuses on finding a single variable answer by expressing that variable, in this case $x$ the private key, as a two or more variable equation. Then generating all possibilities of the new equation and using the two variables to find the single variable. Shank's method for attacking El Gamal first picks $N > \sqrt{n}$ then generates to lists: list j where $entry \equiv a^{j}$ (mod $n$) where $j \in (1,N)$ and list k where $entry \equiv ba^{-Nk}$ (mod $n$) where $k \in (1,N)$. Due to the choice of $N$ and $a$ is a primitive root of $n$, it is certain that a match exists in the two lists. Then using the indices of the match, the private key can be found by $x = j + N*k$. This approach is also know as a "Baby-Step Giant-Step" attack since the j-list takes small steps and the k-list takes $N$ sized steps.
+
+The Pohlig-Hellman approach uses Shank's "Baby-Step Giant-Step" idea but instead divides the problem into finding the answers to $x$ (mod $p$) where $p \in factors(n-1)$. This information is useful because of the Chinese Remainder Theorem, CRT. This theorem states that given $k \equiv a$ (mod $x$) and $k \equiv b$ (mod $y$) $\exists c$ where $k \equiv c$ (mod $xy$). Therefore, using CRT to combine the answers to $x$ (mod $p$) where $p \in factors(n-1)$, one can calculate $x$ (mod $n-1$) and since the private key $1 < x < n-1$ then $x$ (mod $n$) is the solution. However, similar to Pollard's $p-1$ attack on RSA this attack relies on $n-1$ having small prime factors to be efficient.
 
 \subsection{Attacking DSA}
-birthday attacks
+The Digital Signature Algorithm relies on the same premise of El Gamal where solving the Discrete Log Problem is hard. However, the keys of El Gamal and DSA are very different because for $a^{x} \equiv b$ (mod $n$) El Gamal requires a to be a primitive root of n but DSA requires a not to be a primitive root but $a \equiv g^{(n-1)/q}$ (mod $n$) where q is the largest prime factor of $n-1$. This requirement ensures that attacks on El Gamal cannot be used on DSA and the signature algorithm of DSA produces signatures with no collisions. Attacks on DSA are widely undevloped due to a lack of mathematical discovery around the Discrete Log Problem. One of the best current rigorous approaches utilizes Lagrange Lattice Reduction to produce a solution in polynomial time \cite{lattice}. However, a more efficient approach is a birthday attack where one computes random permutations of private key $x$ and random integer $k$, used in the signature algorithm of DSA, to increase the probability of generating an intercepted signature. This approach, however, is probabilistic but does run in $O(\sqrt{n})$ time.
 
 \subsection{Attacking DES}
 DES is a symmetric key algorithm designed in 1975 in conjunction with the U.S. Government. While no longer considered to be a safe algorithm for sensitive information, its popularity in past years makes it worthwhile to attack and benchmark. DES takes in a 64-bit key and uses this key to create 16 sub-keys to be used in each round of the DES encryption. The algorithm was designed to be easy to implement in hardware and difficult to implement in software, so this proved a bit of a challenge to design in our Python scripts and is going to be significantly slower running in software than it would be using actual DES hardware.
@@ -272,6 +277,10 @@ In terms of the efficiency of sending messages, secret key (symmetric key) encry
     \bibitem{root}
     Primitive Root Testing.\\
     \texttt{http://www.apfloat.org/prim.html}
+    
+    \bibitem{lattice}
+    Lattice Attacks on DSA. \\
+    \texttt{https://eprint.iacr.org/2016/058.pdf}
 
 \end{thebibliography}
 
