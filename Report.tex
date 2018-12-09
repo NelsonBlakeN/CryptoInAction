@@ -36,13 +36,12 @@
     Since as early as the ancient Roman days, secret messages have been sent from a command post to the front during wartime. With the constant risk of messengers
     being captured and their messages intercepted, a method of ensuring that only the authorized parties were able to read messages has been necessary. Such is the
     beginning of cryptography and the battle to devise new ways to break cryptographic systems. This project seeks to demonstrate the strengths and weaknesses in
-    current popular cryptographic systems such as RSA, El Gamal, and DES. To do this, a client and a server are connected over the TCP/IP stack and exchange
-    information. The client will send an encrypted message to the server, and the server will decrypt this and respond back with its own encrypted message. The
-    client will then be able to decrypt and read this reply. Meanwhile, a malicious user will capture the encrypted communications en route and attempt to break the
-    cryptographic system. To do this, a brute force and a more intelligent method will be used to recover the plaintext from the ciphertext. In this report, we
-    analyze and discuss the performance of each of these attack vectors on a number of cryptosystems. Unsurprisingly, the brute force attacks on encryption are not
-    nearly as effective as more sophisticated attacks that extort some of the weaker mathematical properties of the cryptosystems. These results are summarized in
-    graphs and explained in depth in this report.
+    current popular cryptographic systems such as RSA, El Gamal, and DES. In this report, we implemented each of these algorithms, and tested their raw efficiency.
+    We also used mathematical concepts to write attacks on these encryption schemes, as well as simple brute force attacks. These were used to assess and compare
+    the security of these algorithms against each other. anUnsurprisingly, the brute force attacks on encryption are not nearly as effective as more sophisticated
+    attacks that extort some of the weaker mathematical properties of the cryptosystems. RSA was found to be the least resilient to most attacks, while One Time Pad
+    was the strongest. Public key encryption was also decidedly slower, with El Gamal taking the most time to encrypt and decrypt a message of the same key and length
+    as its counterparts. These results are summarized in graphs and explained in depth in this report.
 \end{abstract}
 
 
@@ -53,12 +52,12 @@ Mathematicians and computer scientists have spent years developing new algorithm
 These algorithms have come down to two main approaches: symmetric key encryption, where both parties share a single key used to encrypt and decrypt a message,
 and public key encryption, where both parties use a common key for encryption, but also have their own, private keys used in decryption. In our schooling, we
 have learned algorithms using both approaches, either during this course or in MATH 470 - Communications and Cryptography. In this project, we will implement a few
-of these algorithms using Python and TCP sockets, and evaluate their effectiveness. We will first demonstrate the efficiency of the algorithm: how long it
+of these algorithms using Python, and evaluate their effectiveness. We will first demonstrate the efficiency of the algorithm: how long it
 takes to get from plaintext to plaintext end to end compared to the length of the key. Next, we will use implement approaches learned both in this course and
 in MATH 470 to decipher the key. These approaches utilize either a known plain text/cipher text combination to randomly guess the key, or take advantage of the
 public key to perform mathematical operations and decipher the key in a more structured fashion. By timing both the message transfer and the ability to crack the
 decryption, we will put together a comprehensive study on the effectiveness of the algorithms individually and form a comparison between symmetric key encryption
-and public key encryption. Finally, we evaluate the efficiency and effectiveness of the Digital Signature Algorithm (DSA).
+and public key encryption.
 
 % for the progress report and the final report
 \section{Background and Literature Review}
@@ -79,10 +78,6 @@ modes vary how the plain text and cipher text blocks interact and their dependen
 encryption, so that equivalent plain text blocks do not always produce the same cipher text blocks for each message. While this project will not focus on the many
 different modes of operation, it will public and secret key cryptography methods into a comprehensive review of effectiveness and efficiency.
 
-In addition to the need to keep messages secret while they are en route, there is a need to verify authenticity of a message. Verifying that a message was indeed
-sent from the person that they claim to be is arguably as important as sending the message itself. Very similar to one adding one's written signature to the bottom
-of a document to signify his or her agreement with the document, digital signatures work much the same way. This digital signature took the form of the Digital
-Signature Algorithm (DSA) in 1991 with support from the U.S. Government.\cite{mit}\cite{dsa}
 
 \section{Method and Approach}
 % TODO: specify how the code is written and how the attacks work
@@ -146,14 +141,6 @@ $k \equiv b$ (mod $y$) $\exists c$ where $k \equiv c$ (mod $xy$). Therefore, usi
 calculate $x$ (mod $n-1$) and since the private key $1 < x < n-1$ then $x$ (mod $n$) is the solution. However, similar to Pollard's $p-1$ attack on RSA this attack
 relies on $n-1$ having small prime factors to be efficient.
 
-\subsection{Attacking DSA}
-The Digital Signature Algorithm relies on the same premise of El Gamal where solving the Discrete Log Problem is hard. However, the keys of El Gamal and DSA are
-very different because for $a^{x} \equiv b$ (mod $n$) El Gamal requires a to be a primitive root of n but DSA requires a not to be a primitive root but
-$a \equiv g^{(n-1)/q}$ (mod $n$) where q is the largest prime factor of $n-1$. This requirement ensures that attacks on El Gamal cannot be used on DSA and the
-signature algorithm of DSA produces signatures with no collisions. Attacks on DSA are widely undeveloped due to a lack of mathematical discovery around the Discrete
-Log Problem. One of the best current rigorous approaches utilizes Lagrange Lattice Reduction to produce a solution in polynomial time \cite{lattice}. However, a
-more efficient approach is a birthday attack where one computes random permutations of private key $x$ and random integer $k$, used in the signature algorithm of
-DSA, to increase the probability of generating an intercepted signature. This approach, however, is probabilistic but does run in $O(\sqrt{n})$ time.
 
 \subsection{Attacking DES}
 DES is a symmetric key algorithm designed in 1975 in conjunction with the U.S. Government. While no longer considered to be a safe algorithm for sensitive
