@@ -8,6 +8,7 @@
 \usepackage{setspace} % for line spacing
 \usepackage{indentfirst}
 \usepackage{titling} % for multiple title pages
+\usepackage{placeins}   % for \FloatBarrier, helps divide sections
 
 \linespread{1.5}
 %\doublespacing
@@ -179,7 +180,39 @@ can be seen in section \ref{results}.
 \section{Results}
 \label{results}
 
-All of the graphs showing the results of the project testing can be found in Figures \ref{fig:allattack}--\ref{fig:des}
+All of the graphs showing the results of the project testing can be found in Figures \ref{fig:allattack}--\ref{fig:TransferBenchmarks}. A comprehensive illustration of
+all algorithms and their attacks is shown in figure \ref{fig:allattack}. According to the graph, the encryption system most resilient to attacks is El Gamal, since the
+time to guess the key becomes exponential the fastest, and is the quickest to reach a point of computational infeasibility in regards to this project. El Gamal also
+comes in second in this graph, this time using Shank's algorithm of deriving the key. This approach is more complex, but still reaches computational infeasibility
+quickly. Following this line on the graph is the brute force for RSA encryption. Since this attack only has to search values up to the square root of $n$, this result
+is expected. The next most difficult attack per the graph is the Pohlig-Helman algorithm on El Gamal encryption. This attack improves on Shank's algorithm, but improves
+it with the use of the Chinese Remainder Theorem, so it makes sense that the graph would show it to be more efficient. The last attack on the graph is the $p-1$ attack.
+Since this attack has shorter computations and a more mathematical approach to searching for a factor than linearly scanning, it can be expected to be the most efficient
+algorithm in this project.
+
+Figures \ref{fig:rsa1}--\ref{fig:el-gamal1} show the individual results of brute force attacks against all algorithms implemented in this project, in more detail than the
+comprehensive figure described above. The symmetric key encryption schemes became exponential very quickly, and becoming infeasible at 12 digits for DES (fig.
+\ref{fig:DESBruteForce}) and 7 digits for One Time Pad (fig. \ref{fig:OTPBruteForce}). This is a result of the randomness of the key, or the message length in the case of
+One Time Pad. Following these algorithms, the brute force attack on El Gamal encryption was the next closest, becoming out of scope when a prime number of 10 digits was
+used, according to figure \ref{fig:el-gamal1} Finally, the brute force attack on RSA was the most efficient, becoming infeasible with a prime number of 22 digits according
+to figure \ref{fig:rsa1}.
+
+While brute force attacks are the easiest to implement, there are others that are proven to be more efficient. Figure \ref{fig:rsa2} shows one such attack on RSA encryption.
+There are some large spikes in the data, but in general the data shows that RSA encryption can be broken in under a few minutes, despite using a prime of 30 digits long.
+
+Algorithms against the discrete logs that El Gamal encryption is based on were recorded as well. Figures \ref{fig:el-gamal2} and \ref{fig:el-gamal3} show two algorithms
+that derive these keys much faster than a brute force attack. According to figure \ref{fig:el-gamal2}, Shanks's algorithm was able to derive keys using primes up to 16
+digits long before becoming unfeasible. The Pohlig-Helman attack was even more efficient, deriving keys based on primes of 23 digits in length before becoming unfeasible,
+as illustrated in figure \ref{fig:el-gamal3}.
+
+The last benchmark data recorded was the time it would take to encrypt and decrypt data using each encryption scheme, to test efficiency. Generally, symmetric key encryption
+is faster than its public key counter part due to the complexity of the algorithms, and this statement is supported by the graph in figure \ref{fig:TransferBenchmarks}. Both
+One Time Pad and DES stay close to the bottom, requiring little computation to perform their duties. Meanwhile, RSA can be seen slowly rising in time as the key reaches 20
+digits in length. And while the timing doesn't follow a clear trend on it's own, El Gamal encryption is noticeably higher in time than the rest of the group, reaching times
+that are magnitudes higher than its counterparts for equivalent key sizes.
+\\
+\\
+\\
 
 \begin{figure}[hp!] % [hp!] means ''here''
     \begin{center}
@@ -199,9 +232,17 @@ All of the graphs showing the results of the project testing can be found in Fig
 
 \begin{figure}[hp!] % [hp!] means ''here''
     \begin{center}
-        \includegraphics[width=0.85\linewidth]{RSAp-1.PNG}
-        \caption{$p-1$ Attack on RSA}
-        \label{fig:rsa2}
+        \includegraphics[width=0.85\linewidth]{DESBruteForce.png}
+        \caption{Brute Force Attack on DES}
+        \label{fig:DESBruteForce}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{OTPBruteForce.png}
+        \caption{Brute Force Attack on One Time Pad}
+        \label{fig:OTPBruteForce}
     \end{center}
 \end{figure}
 
@@ -210,6 +251,14 @@ All of the graphs showing the results of the project testing can be found in Fig
         \includegraphics[width=0.85\linewidth]{ElGamalBrute.PNG}
         \caption{Brute Force Attack on El Gamal}
         \label{fig:el-gamal1}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{RSAp-1.PNG}
+        \caption{$p-1$ Attack on RSA}
+        \label{fig:rsa2}
     \end{center}
 \end{figure}
 
@@ -231,12 +280,12 @@ All of the graphs showing the results of the project testing can be found in Fig
 
 \begin{figure}[hp!] % [hp!] means ''here''
     \begin{center}
-        \includegraphics[width=0.85\linewidth]{DES.png}
-        \caption{Brute Force Attack on DES}
-        \label{fig:des}
+        \includegraphics[width=0.85\linewidth]{TransferBenchmarks.png}
+        \caption{Time to encrypt and decrpyt a message with each algorithm}
+        \label{fig:TransferBenchmarks}
     \end{center}
 \end{figure}
-
+\FloatBarrier
 \section{Discussion and Recommendations}
 As shown in the Results section of this report, the brute force attacks were significantly slower than the more informed attacks on the cryptosystems. However,
 despite the relative ineffectiveness of the brute force attacks, they were still relatively effective against RSA. Figure \ref{fig:allattack} best shows this data.
