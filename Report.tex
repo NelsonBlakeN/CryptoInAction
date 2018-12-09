@@ -181,14 +181,17 @@ can be seen in section \ref{results}.
 \label{results}
 
 All of the graphs showing the results of the project testing can be found in Figures \ref{fig:allattack}--\ref{fig:TransferBenchmarks}. A comprehensive illustration of
-all algorithms and their attacks is shown in figure \ref{fig:allattack}. According to the graph, the encryption system most resilient to attacks is El Gamal, since the
-time to guess the key becomes exponential the fastest, and is the quickest to reach a point of computational infeasibility in regards to this project. El Gamal also
-comes in second in this graph, this time using Shank's algorithm of deriving the key. This approach is more complex, but still reaches computational infeasibility
-quickly. Following this line on the graph is the brute force for RSA encryption. Since this attack only has to search values up to the square root of $n$, this result
-is expected. The next most difficult attack per the graph is the Pohlig-Helman algorithm on El Gamal encryption. This attack improves on Shank's algorithm, but improves
-it with the use of the Chinese Remainder Theorem, so it makes sense that the graph would show it to be more efficient. The last attack on the graph is the $p-1$ attack.
-Since this attack has shorter computations and a more mathematical approach to searching for a factor than linearly scanning, it can be expected to be the most efficient
-algorithm in this project.
+all algorithms and their attacks is shown in figure \ref{fig:allattack}. According to the graph, the encryption system most resilient to attacks is One Time Pad, which
+reaches an infeasible limit the fastest. This is reasonable due to the randomness of the key and it's dependency on the length of the message. The next strongest is
+El Gamal, since it is the quickest to reach a point of computational infeasibility in regards to this project. El Gamal also comes in third in this graph, this time
+using Shank's algorithm of deriving the key. This approach is more complex, but still reaches computational infeasibility quickly. DES is also close to this attack on
+the graph. Due to the random nature of the keys, instead of using integers, it was difficult to get a data point for every key digit size, which explains the flat
+lines on its graph. However, its brute force difficulty is shown to be comparable to Shank's algorithm, and reaches a very high time to derive a key for a size of 16
+digits, compared to other graphs. Following this line on the graph is the brute force for RSA encryption. Since this attack only has to search values up to the
+square root of $n$, this result is expected. The next most difficult attack per the graph is the Pohlig-Helman algorithm on El Gamal encryption. This attack
+improves on Shank's algorithm, but improves it with the use of the Chinese Remainder Theorem, so it makes sense that the graph would show it to be more efficient.
+The last attack on the graph is the $p-1$ attack. Since this attack has shorter computations and a more mathematical approach to searching for a factor than
+linearly scanning, it can be expected to be the most efficient algorithm in this project.
 
 Figures \ref{fig:rsa1}--\ref{fig:el-gamal1} show the individual results of brute force attacks against all algorithms implemented in this project, in more detail than the
 comprehensive figure described above. The symmetric key encryption schemes became exponential very quickly, and becoming infeasible at 12 digits for DES (fig.
@@ -201,7 +204,7 @@ While brute force attacks are the easiest to implement, there are others that ar
 There are some large spikes in the data, but in general the data shows that RSA encryption can be broken in under a few minutes, despite using a prime of 30 digits long.
 
 Algorithms against the discrete logs that El Gamal encryption is based on were recorded as well. Figures \ref{fig:el-gamal2} and \ref{fig:el-gamal3} show two algorithms
-that derive these keys much faster than a brute force attack. According to figure \ref{fig:el-gamal2}, Shanks's algorithm was able to derive keys using primes up to 16
+that derive these keys much faster than a brute force attack. According to figure \ref{fig:el-gamal2}, Shank's algorithm was able to derive keys using primes up to 16
 digits long before becoming unfeasible. The Pohlig-Helman attack was even more efficient, deriving keys based on primes of 23 digits in length before becoming unfeasible,
 as illustrated in figure \ref{fig:el-gamal3}.
 
@@ -287,21 +290,31 @@ that are magnitudes higher than its counterparts for equivalent key sizes.
 \end{figure}
 \FloatBarrier
 \section{Discussion and Recommendations}
-As shown in the Results section of this report, the brute force attacks were significantly slower than the more informed attacks on the cryptosystems. However,
-despite the relative ineffectiveness of the brute force attacks, they were still relatively effective against RSA. Figure \ref{fig:allattack} best shows this data.
-Here, we see that El Gamal is much more resistant to brute force attacks than RSA is. Additionally, the $p-1$ factorization attack is by far more successful than
-the Shanks' and Pohlig-Hellman attacks on El Gamal. This seems to point to the idea that El Gamal is overall more resistant to attack than RSA is, so this research
-team recommends the use of El Gamal over RSA for more sensitive information sent over insecure channels.
+As shown in the Results section of this report, the brute force attacks were significantly slower and less efficient than the more informed attacks on the
+cryptosystems. However, despite the relative ineffectiveness of the brute force attacks, they were still relatively effective against RSA. Figure
+\ref{fig:allattack} best shows this data. Here, we see that El Gamal is much more resistant to brute force attacks than RSA is. Additionally, the $p-1$
+factorization attack is by far more successful than the Shanks' and Pohlig-Hellman attacks on El Gamal. These public key systems can also be compared to symmetric
+key schemes. Referring to \ref{fig:allattack} again, the One Time Pad encryption scheme has the most resiliency of any attacks, and according to
+\ref{fig:TransferBenchmarks} it is also fast to compute and send between parties. Therefore, the most reasonable choice based on this data set would be the
+One Time Pad encryption scheme. While this is the sensible conclusion based on the collected data, One Time Pad has its weaknesses, particularly the requirement
+for a secure way to exchange keys.
 
-For the testing of DES, there was the question of how to simulate the testing of various key sizes for the algorithm, since the standard requires 64-bit keys.
-However, to simulate smaller keys for our attacks, we created algorithms to generate keys of varying strengths. Keys with many leading zeroes are considered weaker
-keys and more random-valued keys are considered stronger keys.
+This report can also be used to recommend minimum defenses against different attack schemes. Key sizes for symmetric encryption schemes don't have to be large;
+figures \ref{fig:DESBruteForce} and \ref{fig:OTPBruteForce} show that keys of 12 and 7 digits long, respectively, will force attackers to spend several hours
+attempting to break the encryption, and time will increase exponentially afterward. Public key encryption schemes require larger defenses. El Gamal encryption
+should use a prime number of approximately 22 digits long, and probably much larger, in reference to figure \ref{fig:el-gamal3}. If RSA encryption is being used,
+it is hard to give a strong recommendation for any prime number size, because of the efficiency seen by the $p-1$ attack in figure \ref{fig:rsa2}.
+
+While security is an important factor, the speed of data transfer is also important. Figure \ref{fig:TransferBenchmarks} shows that public key cryptography as
+a whole is much slower than symmetric key algorithms, therefore One Time Pad or DES should be implemented if speed is an important factor to a system.
 
 \section{Conclusion}
-Brute force attacks are significantly slower than more informed attacks, such as Pollard's $p-1$ attack on RSA and Shanks' ``Baby-Step Giant-Step'' attack on El
-Gamal. Additionally, all attacks on every cryptosystem becomes significantly more difficult when the size of the encryption key increases. In most cases, the
-increase in computational complexity increases at an exponential rate. Overall, the One-Time Pad was the most secure cryptosystem under test, followed by El Gamal,
-RSA, and DES.
+In conclusion, these four algorithms have their benefits and drawbacks, depending on the attack mechanism. Public key systems like RSA and El Gamal provide
+proven mathematical security, but vary in true functional security. RSA can be broken easily using a $p-1$ decryption scheme, while El Gamal is somewhat stronger,
+but still falling weak to the Pohlig-Helman algorithm. These algorithms are in general slower due to their computational cost. Meanwhile, symmetric key
+encryption schemes like One Time Pad and DES are much stronger, since their keys are more random, while also being faster because of less computation when
+computing keys and performing encryption. For all encryption schemes, the computational complexity of deriving a correct key was exponential with brute force
+attacks, but became easier with more structured attacks on public key cryptosystems.
 
 In terms of the efficiency of sending messages, secret key (symmetric key) encryption was faster than public key (asymmetric key) encryption. This is likely due to
 the fact that the iterative exponentiation and modulus division takes much more time than simple XORs and reordering of bit sequences. This explains why most
@@ -377,7 +390,90 @@ All of the source code for this project can be found at:
 
 \href{https://github.com/NelsonBlakeN/CryptoInAction}{https://github.com/NelsonBlakeN/CryptoInAction}.
 
-\newpage
 \section{Appendix B: Presentation Slides}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide1.PNG}
+        \label{fig:slide1}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide2.PNG}
+        \label{fig:slide2}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide3.PNG}
+        \label{fig:slide3}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide4.PNG}
+        \label{fig:slide4}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide5.PNG}
+        \label{fig:slide5}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide6.PNG}
+        \label{fig:slide6}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide7.PNG}
+        \label{fig:slide7}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide8.PNG}
+        \label{fig:slide8}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide9.PNG}
+        \label{fig:slide9}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide10.PNG}
+        \label{fig:slide10}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide11.PNG}
+        \label{fig:slide11}
+    \end{center}
+\end{figure}
+
+\begin{figure}[hp!] % [hp!] means ''here''
+    \begin{center}
+        \includegraphics[width=0.85\linewidth]{slide12.PNG}
+        \label{fig:slide12}
+    \end{center}
+\end{figure}
 
 \end{document}
